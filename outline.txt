@@ -1,0 +1,33 @@
+Introduction
+    Gaps in VMI:
+        No app-level introspection
+        Hard to find data that is not exposed via APIs
+    Tap points as semantically meaningful units
+    This paper: techniques for finding useful tap points
+Fully Supervised
+    URLs
+    SSL keys
+Semi-Supervised
+    Give examples and use supervised ML techniques
+Unsupervised
+    Text-finding
+    Clustering tap points by memory access
+Experiments
+    For all experiments, try with: Haiku, Windows (8?) and Linux
+    Fully Supervised
+        URLs in IE9/10, Chrome
+        SSL keys in IE, malware (synthetic if necessary)
+    Semi-Supervised
+        Train on disk-based registry, find reg op tap points
+        Train on one version of dmesg (debian-amd64), find in arm or mips
+    Unsupervised
+Limitations
+    Not applicable to memory analysis
+    Attacks
+        Could something work with just encoded data?
+        Randomize tap locations using something like JIT
+Related work
+    Lares
+    DBI?
+    Previous uses of memory interception
+Conclusion
