@@ -1,0 +1,57 @@
+Methodology: Open browser, go to custom server that prints master key,
+search for master key tap point, finally look up tap point to see where
+it is.
+
+=== Windows 7 SP1 ===
+
+Internet Explorer 8.0.7601.17514
+Process: lsass.exe
+
+Caller:  ncrypt!_Tls1ComputeMasterKey@32+0x57 
+EIP:     ncrypt!_PRF@40+0x11a
+
+Chrome 23.0.1271.64
+Process: chrome.exe
+
+Caller:  chrome_dll!_NSC_DeriveKey+0x1241
+EIP:     chrome_dll!_TLS_PRF+0xa0
+
+Caller:  chrome_dll!_sftk_TLSPRFInit+0x96
+EIP:     chrome_dll!_memcpy+0x297
+
+Caller:  chrome_dll!_sftk_NewAttribute+0x89
+EIP:     chrome_dll!_memcpy+0x297
+
+Firefox 16.0.2
+Process: firefox.exe
+
+Caller:  unknown
+EIP:     freebl3!_TLS_PRF+0xbb
+
+Caller:  softokn3!_sftk_narrowToTokenObject+0x9b
+EIP:     msvcr100.i386!zzz_AsmCodeRange_Begin+0x57
+
+Caller:  softokn3!_sftk_TLSPRFInit+0x96
+EIP:     msvcr100.i386!zzz_AsmCodeRange_Begin+0x57
+
+Opera 12.10
+Process: opera.exe
+
+Caller:  Opera.dll+0x2eb06e
+EIP:     Opera.dll+0x50251
+
+=== Debian squeeze amd64 ===
+
+Openssl s_client 0.9.8
+Process: openssl
+
+Caller:  unknown (FIXME)
+RIP:     libssl.so.0.9.8!tls1_generate_master_secret+0x108
+
+=== Debian squeeze armel ===
+
+Openssl s_client 0.9.8
+Process: openssl
+
+Caller:  unknown (FIXME)
+R15:     libssl.so.0.9.8!tls1_PRF+0x144
