@@ -1,0 +1,28 @@
+\section{Evaluation}
+\label{sec:eval}
+
+For all experiments, try with: Haiku, Windows (8?) and Linux
+
+\subsection{Fully Supervised}
+\label{sec:eval:subsec:supervised}
+\begin{itemize}
+\item URLs in IE9/10, Chrome, Firefox, Opera
+\item Filenames? Registry Keys?
+\item SSL keys in IE, Chrome, Firefox, Opera
+\item SSL keys in malware
+\end{itemize}
+
+\subsection{Semi-Supervised}
+\label{sec:eval:subsec:semisupervised}
+\begin{itemize}
+\item Train on disk-based registry, find reg op tap points
+\item Train on one version of dmesg (debian-amd64), find in arm or mips (or FreeBSD?)
+\item Windows event logs?
+\end{itemize}
+
+\subsection{Unsupervised}
+\label{sec:eval:subsec:unsupervised}
+\begin{itemize}
+\item Take program of interest (malware?), cluster taps and see what falls out
+\item Text-finding via clustering, entropy
+\end{itemize}
