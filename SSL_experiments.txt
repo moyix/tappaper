@@ -48,6 +48,14 @@ Process: openssl
 Caller:  unknown (FIXME)
 RIP:     libssl.so.0.9.8!tls1_generate_master_secret+0x108
 
+Epiphany [version: FIXME]
+Process: epiphany-browser
+
+Caller:  unknown (FIXME)
+RIP:     0x7f042cd435be (md5_write+302)
+
+Note: SSLv3, so PRF outer layer is plain MD5
+
 === Debian squeeze armel ===
 
 Openssl s_client 0.9.8
