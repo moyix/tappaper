@@ -1,0 +1,18 @@
+We use QEMU~\cite{Bellard:2005}, and this stuff could be used in a system like Lares~\cite{payne:2008}. 
+
+Visualization:
+"ICU64: Real-time Hacking of a C64 Emulator" http://icu64.blogspot.com/
+Visual Reverse Engineering of Binary and Data Files~\cite{Conti:2008uq}
+Discovering an RC4 Anomaly through Visualization~\cite{Schweitzer:2006kx}
+OpenConflict~\cite{Bursztein:2011fk}
+
+Data structure reverse engineering:
+Automatic Reverse Engineering of Data Structures from Binary Execution~\cite{Lin:2010} -- contains insight that type ~ call stack are related
+TIE: Principled Reverse Engineering of Types in Binary Programs~\cite{Lee:2011}
+Howard: A Dynamic Excavator for Reverse Engineering Data Structures~\cite{Slowinska:2011ys}
+
+Reverse engineering of binary device drivers with RevNIC~\cite{Chipounov:2010vn}
+
+Static analysis:
+Analyzing Memory Accesses in x86 Executables: http://research.cs.wisc.edu/wpis/papers/cc04.pdf
+
