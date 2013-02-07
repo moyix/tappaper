@@ -6,7 +6,7 @@
 \date{}
 
 %make title bold and 14 pt font (Latex default is non-bold, 16 pt)
-\title{\Large \bf Tappan Zee (North) Bridge: Techniques for Active Monitoring using Virtual Machine Introspection}
+\title{\Large \bf Tappan Zee (North) Bridge: Mining Memory Accesses for Introspection}
 
 \author{
 {\rm Brendan Dolan-Gavitt}\\
@@ -29,8 +29,23 @@ Georgia Institute of Technology
 %\thispagestyle{empty}
 
 \subsection*{Abstract}
-Your Abstract Text Goes Here.  Just a few facts.
-Whet our appetites.
+
+The ability to introspect into the behavior of software at runtime is
+crucial for many security-related tasks, such as virtual machine-based
+intrusion detection and low-artifact malware analysis. Although some
+progress has been made in this task by automatically creating programs
+that can passively retrieve kernel-level information, two key challenges
+remain. First, it is currently difficult to extract useful information
+from user-level applications, such as web browsers. Second, discovering
+points within the OS and applications to hook for \emph{active
+monitoring} is still an entirely manual process. In this paper we
+propose a set of techniques to mine the memory accesses made by an
+operating system and its applications to locate useful places to deploy
+active monitoring, which we call \emph{tap points}. We demonstrate the
+efficacy of our techniques by finding tap points for XXX useful
+introspection tasks such as finding SSL keys and monitoring web browser
+activity on four different operating systems (Windows 7, Linux, FreeBSD,
+and Haiku) and two processor architectures (ARM and x86).
 
 \input{introduction}
 
