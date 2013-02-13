@@ -1,15 +1,97 @@
 \section{Introduction}
+\label{sec:introduction}
 
-Gaps in VMI:
+Many security applications have a need to inspect the internal workings
+of software. Host-based intrusion systems, malware analyses, and
+digital forensics all depend to some degree on being able to obtain
+information about software that is by design undocumented and hidden
+from public view. Thus, to operate correctly, security software is
+typically built on \emph{reverse engineering}, the art and practice of
+elucidating the undocumented principles on which software is built.
 
-\begin{itemize}
-\item No app-level introspection
-\item Hard to find data that is not exposed via APIs
-\end{itemize}
+Unfortunately, reverse engineering is expensive, time-consuming, and
+requires a high degree of expertise. The problem is exacerbated by the
+fact that, to protect against tampering, security applications are often
+hosted in environments separated from the target being inspected, such
+as a separate virtual machine. Because of this, their visibility into
+the target is often limited to low-level features such as memory and CPU
+state, and any higher-level information must be reconstructed based on
+reverse engineered knowledge.
 
-\noindent
-Tap points as semantically meaningful units \\
+This problem, which we will refer to as the \emph{introspection
+problem}, has been approached by a number of recent research efforts
+such as Virtuoso~\cite{Dolan-Gavitt:2011uq} and VMST~\cite{Fu:2012fk}.
+Existing systems, however, have a number of limitations. First, they
+focus on retrieving kernel-level information. However, a great deal of
+security-relevant information exists only at user-level, such as URLs
+being visited by the browser, instant messages and emails sent by
+desktop clients, and system and application log messages. Second,
+they require that the desired information be accessible through some
+public interface (a public API in the case of Virtuoso, and a userland
+program or kernel module in the case of VMST). This means that some
+security-relevant information, such as \fixme{example}, may be
+inaccessible to such tools. Finally, Payne et al.~\cite{payne:2008}
+argue that many security applications need some form of \emph{active
+monitoring}; that is, they need to be notified when certain system
+events occur. Current solutions to the introspection problem provide no
+way of locating places in the system where it would be useful to
+interpose.
 
-\noindent
-This paper: techniques for finding useful tap points
+In this paper, we attempt to address the limitations of past solutions
+by examining a rich source of information about system and application
+activity: memory accesses observed at runtime. Our key insight is that a
+memory access made at a different points in a program \footnote{To deal
+with bulk-copy functions such as \texttt{memcpy}, we require a
+definition of a program point that is slightly stronger than just the
+program counter.  We discuss this in more detail in Section
+\ref{sec:technical}.} can be treated as a streams of information that
+are likely to be of the same type. For example, when visiting a URL, a
+web browser must write to memory the URL that is being visited, and it
+will generally do so at the same point in the program; by intercepting
+memory accesses made at this program point we can observe all URLs
+visited. These program points, which we call \emph{tap points}, provide
+a natural place to interpose to extract security-relevant information.
 
+There are a several challenges that must be overcome to make use of tap
+points. The first is the sheer amount of data that must be sifted
+through. In ten minutes' worth of execution on a Windows 7 system, for
+example, we observed a total of 18.9 \emph{million} unique tap points
+which read and wrote a total of 32.8 gigabytes of data. To overcome this
+challenge, we make use of techniques from information retrieval and
+machine learning, described in Section~\ref{sec:technical}, to quickly
+zero in on the tap points that read or write information relevant to
+introspection.
+
+Second, simply setting up an environment in which one can observe every
+memory access made by the whole system (OS and applications) poses a
+challenge. Whole-system emulators such as QEMU~\cite{Bellard:2005}
+provide the necessary basis for such instrumentation, but intercepting
+and analyzing every memory access online is not practical: the resulting
+system is so slow that network connections time out and the guest OS may
+think that programs have become unresponsive. To solve this problem, we
+add \emph{record and replay} to QEMU, which allows executions to be
+recorded with low overhead. Our heavyweight analyses are then run on
+the replayed execution to analyze every memory access made
+\emph{without} perturbing the system under inspection. We describe our
+system, Tappan Zee Bridge (TZB),\footnote{Please accept our sincere
+apologies for this pun.} in detail in
+Section~\ref{sec:implementation}.
+
+Finally, previous systems have required a significant amount of effort
+to support new architectures. This problem has become more pressing in
+recent years, as ARM-based devices such as smartphones have exploded in
+popularity. Because TZB looks at memory accesses, rather than inspecting
+binary code, it naturally supports a wide variety of architectures with
+minimal effort. To demonstrate this, our evaluation includes the MIPS
+and ARM architectures in addition to x86.
+
+The remainder of this paper is structured as follows.
+Section~\ref{sec:technical} describes techniques for finding tap points
+of interest. We then discuss our system, Tappan Zee Bridge, which
+implements these techniques, in Section~\ref{sec:implementation}. We
+evaluate TZB in Section~\ref{sec:eval}, and show that it is capable of
+finding tap points useful for introspection in a wide variety of
+applications, operating systems, and architectures. Finally, we describe
+the limitations of our approach in Section~\ref{sec:limitations},
+related work in this area in Section~\ref{sec:relwork}, and offer
+concluding remarks in Section~\ref{sec:conclusion}.
