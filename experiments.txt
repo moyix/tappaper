@@ -1,0 +1,130 @@
+Dmesg tests [TODO]
+   * Unigrams: the results we have now are for unigrams with
+     Jensen-Shannon divergence. Should we redo with cosine distance?
+   * Bigrams: we need to test the same set of OSes with bigrams and cosine
+     distance (since we don't have bigram J-S implemented)
+   * Test cases:
+     * Debian squeeze armel
+     * Debian squeeze amd64
+     * Minix (i386)
+     * FreeBSD (i386)
+     * Haiku (i386)
+   * Methodology:
+     * Capture "training" dmesg by doing dmesg on host (debian sid amd64)
+     * Record the boot process up to login prompt
+     * Compute unigram, bigram statistics
+     * Use nearest_unigram_hist.py and nearest_bigram_hist.py to sort taps
+     * Check top N to see which (if any) are dmesg-like (boot logs)
+   * Results:
+     * Unigram:
+       * Found boot messages in all using J-S distance
+       * What about cosine distance???
+     * Bigram: ???
+
+SSL Tests [DONE]
+   * Test cases:
+     * Windows 7: IE9, Firefox, Chrome, Opera
+     * Debian squeeze amd64: openssl s_client, epiphany
+     * Debian squeeze armel: openssl s_client
+   * Methodology:
+     * Start instrumented openssl server (s_server)
+     * Visit server using browser while recording
+     * Note SSL master key printed out by instrumented server
+     * Search for key bytes using stringfind plugin
+   * Open questions:
+     * armel and amd64 results are missing callstack info. Is it necessary?
+     * epiphany is slightly tricky because we need deep callastack if we want
+       a tap point that is just SSL key (due to use of SSLv3 instead of TLS).
+       How do we address this in the paper? Do we fix it in writing or in
+       the implementation?
+   * Results:
+     * Found SSL tap point in all cases. See SSL_experiments.txt in the repo for
+       details
+
+SSL Malware [DONE]:
+   * Test case:
+     * Sykipot
+        http://securityblog.verizonbusiness.com/2012/10/31/hurricane-sandy-serves-as-lure-to-deliver-sykipot/
+   * Methodology:
+     * Begin capturing VM network traffic using -net dump,file=foo.pcap -net user
+     * Begin recording
+     * Start Sykipot malware
+     * Wait 5 minutes
+     * Stop recording
+     * Extract sample SSL packet, use keyfind plugin to find tap points that
+       write byte sequence that can decrypt
+   * Results:
+     * Successfully decrypted malware connections without man in the middle!
+     * Note that data was further encrypted using a custom scheme, but searching
+       for the decrypted packet data pinpointed the encryption/decryption
+       functions in the malware
+
+URL Tests [TODO]
+   * Test cases:
+     * Windows 7: IE9, Firefox, Chrome, Opera
+     * Debian squeeze amd64: epiphany
+     * Debian squeeze armel: epiphany
+     * Haiku: Bon Echo (based on Firefox)
+   * Methodology
+     * Open browser
+     * Begin record
+     * Visit by typing into URL bar:
+       * http://google.com
+       * http://facebook.com
+       * http://bing.com
+     * End record
+     * Search for URLs using stringsearch or tapindex/memdump
+   * Results:
+     * I believe we had found something for IE9 but this should be repeated
+     * ???
+
+File Test [TODO]
+   * Test cases:
+     * Windows 7
+     * Debian squeeze amd64
+     * Debian squeeze armel
+     * Haiku
+     * FreeBSD
+   * Methodology
+     * Generate 100 files with likely-unique names
+     * Begin record
+     * Open files somehow (OS-specific)
+     * End record
+     * Use either tapindex/memdump or stringsearch to look for the filenames
+   * Open questions:
+     * To minimize the chance of finding app-specific tap points, should we
+       open some of the files with a different app? E.g. half with "cat", half
+       with "grep"?
+   * Results: ???
+
+Registry test [DONE]
+   * Test cases:
+     * Windows 7
+   * Methodology:
+     * Registry on disk is made up of "cells" which are of various types
+     * Extract all cells from disk-based registry
+     * Compute bigram stats for each cell type, and all cells combined
+     * Use nearest_bigram_hist.py on Windows 7 booted+apps run
+     * Examine top 30, see if any of them are actually registry-related
+   * Open questions:
+     * Do we even include this?
+     * Also, haven't actually verified contents of the taps here; I cheated and
+       used debug symbols.
+   * Results:
+     * All it found was something that wrote out dirty registry blocks to disk.
+
+Clustering [TODO]
+   * System states: Win 7 booted/idle
+     * Win 7 booted/apps
+     * FreeBSD booting
+     * FreeBSD booted/idle
+     * FreeBSD booted/apps
+     * FreeBSD shutdown
+   * Methodology:
+     * Cluster all taps for each state using k=100 and cosine distance
+       (spherical k-means)
+     * Sample clustered taps by picking tap at std dev = {0, 0.5, 0.75, 1.0,
+       1.25, 1.5, 1.75, 2.0}
+     * Hand-label these taps
+     * Compute cluster quality metric using hand-labeled as ground truth
+   * Results: ???
