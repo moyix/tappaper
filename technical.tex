@@ -171,7 +171,7 @@ Then, using the \texttt{keyfind} plugin, we test each 48 bytes written
 by each tap point and see whether the keys derived from it successfully
 decrypt a sample packet sent by the client. If so, then we conclude that
 the tap point can be used to decrypt SSL/TLS connections made by the
-program under inspection. In Section~\ref{sec:eval:subsec:ssl} we show
+program under inspection. In Section~\ref{sec:eval:subsec:sslmal} we show
 how this technique can be used to spy on connections made by the Sykipot
 malware, without performing a (potentially detectable) man in the middle
 attack.
@@ -193,7 +193,7 @@ algorithm~\cite{Steinhaus:1956kx}, but using the cosine distance measure
 described in the previous section. This variant of $k$-means is known as
 \emph{spherical $k$-means}.~\cite{Dhillon:2001fk} As in the statistical
 search case, we use bigram statistics for our feature vectors, and we
-weight each vector using the well-known ``term frequency–inverse
+weight each vector using the well-known ``term frequency-inverse
 document frequency''~\cite{Sparck-Jones:1988uq} statistic from
 information retrieval, which helps increase the effect of rare bigrams
 for distinguishing between different tap points. We evaluate the

@@ -1,28 +1,196 @@
 \section{Evaluation}
 \label{sec:eval}
 
-For all experiments, try with: Haiku, Windows (8?) and Linux
+In this section, we evaluate the efficacy of our various tap point search
+strategies, described in Section~\ref{sec:technical}, in finding tap
+points useful for introspection. Our experiments are motivated by
+real-world introspection applications, and so for each experiment we
+describe a typical application for the tap points found. Each experiment
+was also generally performed on a variety of different operating sytems,
+applications, and architectures in order to evaluate TZB's ability to
+handle a diverse range of introspection targets.
 
-\subsection{Fully Supervised}
-\label{sec:eval:subsec:supervised}
-\begin{itemize}
-\item URLs in IE9/10, Chrome, Firefox, Opera
-\item Filenames? Registry Keys?
-\item SSL keys in IE, Chrome, Firefox, Opera
-\item SSL keys in malware
-\end{itemize}
+\subsection{File Access}
+\label{sec:eval:subsec:file}
 
-\subsection{Semi-Supervised}
-\label{sec:eval:subsec:semisupervised}
-\begin{itemize}
-\item Train on disk-based registry, find reg op tap points
-\item Train on one version of dmesg (debian-amd64), find in arm or mips (or FreeBSD?)
-\item Windows event logs?
-\end{itemize}
+\begin{table}
+    \centering
+    \begin{tabular}{|l|l|l|}
+        \hline
+        Target & Tap & ASCII? \\
+        \hline
+        Debian (amd64) & foo & foo \\ 
+        Debian (arm) & foo & foo \\
+        Windows 7 (x86) & foo & foo \\
+        Haiku (x86) & foo & foo \\
+        FreeBSD (x86) & foo & foo \\
+        \hline
+    \end{tabular}
+\caption{Tap points found for file access on different operating
+systems. The ``ASCII'' column indicates whether the data was written in
+ASCII or UTF-16.}
+\label{tbl:file}
+\end{table}
 
-\subsection{Unsupervised}
-\label{sec:eval:subsec:unsupervised}
-\begin{itemize}
-\item Take program of interest (malware?), cluster taps and see what falls out
-\item Text-finding via clustering, entropy
-\end{itemize}
+Monitoring file accesses is a requirement for many host-based security
+applications, including on-access anti-virus scanners. Thus, locating a
+tap point at which systemwide file accesses can be observed is of
+considerable importance. However, because previous approaches to the
+introspection problem~\cite{Dolan-Gavitt:2011uq,Fu:2012fk} are limited
+to polling the target for information, they cannot be used in this
+scenario.
+
+To find such a tap point, we designed a training run that created and
+accessed 100 files, each named after ten successive digits of $\pi$. The
+introspection targets chosen for this test were: Debian squeeze (amd64),
+Debian squeeze (armel), Windows 7 SP1 32-bit, FreeBSD 9.0, and Haiku R1
+Alpha 3. We then searched for tap points that wrote strings matching the
+ASCII and UTF-16 encodings of the filenames using the
+\texttt{stringsearch} analysis plugin. The UTF-16 encodings were
+included because it was known that Windows 7 uses UTF-16 for strings
+pervasively, allowing us to surmise that filenames would likely be
+UTF-16 encoded. Finally, to validate the tap points found, we looked at
+all data written by the tap point to ensure that it contained all of the
+filenames accessed, and that no other data was mixed in.
+
+The results are shown in Table~\ref{tbl:file}. \fixme{Add commentary
+here when the results are in.}
+
+\subsection{URL Access}
+\label{sec:eval:subsec:url}
+
+\begin{table}
+    \centering
+    \small
+    \begin{tabular}{|l|l|l|}
+        \hline
+        Browser & Caller & PC \\
+        \hline
+        Deb Epiphany (arm) & unknown & \fixme{unknown} \\
+        Deb Epiphany (amd64) & unknown & \fixme{unknown} \\ 
+        Win7 IE8 (x86) & \texttt{0x6ed1351a} & \texttt{0x6ece2b43} \\
+        Win7 Firefox (x86) & \texttt{0x6bb1284c} & \texttt{0x6b1bb561} \\
+        Win7 Opera (x86) &  \texttt{0x6ae819aa} & \texttt{0x6b10434a} \\
+        Haiku WebPositive (x86) & \texttt{0x00253721} & \texttt{0x02859583} \\
+        \hline
+    \end{tabular}
+\caption{Tap points found that write the URL typed into the browser by
+the user.}
+\label{tbl:url}
+\end{table}
+
+As with file access, monitoring visited URLs is likely to be of use to
+host-based intrusion detection and prevention systems. For example, an
+IDS may wish to verify that outgoing requests were initiated by a human
+rather than malware on the users's machine, or match URLs visited
+against a blacklist of malicious sites. This poses a challenge for
+existing introspection solutions, as URL load notification is not
+generally exposed by a public API, and the data resides in a user
+application (the browser).
+
+To find URL tap points, we created training executions by visiting a set
+of three URLs (Google, Facebook, and Bing) the following operating
+systems and browsers: Epiphany on Debian squeeze (armel and amd64);
+Firefox 16.0.2, Opera 12.10, and Internet Explorer 8.0.7601.17514 on
+Windows 7 SP1 (x86); and WebPositive on Haiku (x86). As with the file
+access case, we used the \texttt{stringsearch} plugin to search for the
+ASCII and UTF-16 representations of the three URLs, and then validated
+each tap point found to ensure that it wrote only the desired data. The
+results can be seen in Table~\ref{tbl:url}.
+
+\fixme{We need to fix the caller information for amd64 and arm before
+we submit. Also hopefully this will make the Opera result better---right
+now each URL gets put into its own tap point, probably because of FPO;
+the tap listed does contain every URL, but also contains some extra
+infomration.}
+
+\subsection{TLS/SSL Master Secrets}
+\label{sec:eval:subsec:ssl}
+
+\begin{table*}
+    \centering
+    \small
+    \begin{tabular}{|l|l|l|l|}
+        \hline
+        Client & Caller & PC & Process \\
+        \hline
+        Deb OpenSSL (arm) & unknown & \texttt{tls1\_PRF+0x144} & openssl \\
+        Deb OpenSSL (amd64) & unknown & \texttt{tls1\_generate\_master\_secret+0x108} & openssl \\ 
+        Deb Epiphany (amd64) & unknown & \texttt{md5\_write+302} & epiphany \\ 
+        Win7 Chrome (x86) & \texttt{\_NSC\_DeriveKey+0x1241} & \texttt{\_TLS\_PRF+0xa0} & chrome.exe \\
+        Win7 IE8 (x86) & \texttt{\_Tls1ComputeMasterKey@32+0x57} & \texttt{\_PRF@40} & lsass.exe \\
+        Win7 Firefox (x86) & unknown & \texttt{\_TLS\_PRF+0xbb} & firefox.exe \\
+        Win7 Opera (x86) & \texttt{Opera.dll+0x2eb06e} & \texttt{Opera.dll+0x50251} & opera.exe \\
+        \hline
+    \end{tabular}
+\caption{Tap points found that write the SSL/TLS master secret for each
+SSL/TLS connection. These keys can be used to perform transparent
+interception of SSL traffic without man-in-the-middle. Note that for
+readability we have reported the symbolic names found using debug
+symbols (where available); however, this functionality is not a
+necessary part of TZB.}
+\label{tbl:ssl}
+\end{table*}
+
+Monitoring SSL/TLS-encrypted traffic is a classic problem for intrusion
+detection systems. Currently, hypervisor- or network- based IDSes that
+wish to analyze encrypted traffic must perform a man-in-the-middle
+attack on the connection, presenting a false server certificate to the
+client. Not only does this require the client to cooperate by trusting
+certificates signed by the intrusion detection system, it also takes
+control of the certificate verification process out of the hands of the
+client---a dangerous step, given that many existing SSL/TLS interception
+proxies have a history of certificate trust
+vulnerabilities~\cite{JarmocBHEU2012}.
+
+Instead of a man-in-the-middle attack, we can instead use TZB to find a
+tap point that reads or writes the SSL/TLS master secret for each
+encrypted connection. Because this secret must be generated for each
+SSL/TLS connection, if we can find such a tap point, it can then be
+provided to the IDS to decrypt and, if necessary, modify the content of
+the SSL stream.
+
+To find the location of these tap points, we a modified copy of
+OpenSSL's \texttt{s\_server} utility that prints out the SSL/TLS master
+key any time a connection is made. We then recorded executions in which
+we visited the server with each of our tested SSL clients, and noted the
+SSL/TLS master secret. Finally, we used \texttt{stringsearch} to search
+for a tap point that wrote the master key, and verified that the tap
+wrote exactly one master key per connection. For this test, we used:
+OpenSSL s\_client 0.9.8 on Debian squeeze (armel), OpenSSL s\_client
+0.9.8 and Epiphany \fixme{version} on Debian squeeze (amd64), and Firefox
+16.0.2, Google Chrome 23.0.1271.64, Opera 12.10, and Internet Explorer
+8.0.7601.17514 on Windows 7 SP1 (x86). The results are shown in
+Table~\ref{tbl:ssl}.
+
+There is one particular point of interest to observe in these results.
+In the case of Epiphany on Debian, we found that one level of callstack
+information was \emph{not} sufficient, in contrast to the other results
+reported here---with only the immediate caller, the tap point contains
+more data than just the SSL/TLS master secret. This is because the
+version of Epiphany uses SSLv3 to make connections, and the
+pseudo-random function (PRF) used in SSLv3 has the form
+$MD5(SHA1(\ldots))$. The other implementations instead use TLSv1.0,
+where the PRF has the form $MD5(\ldots) \oplus SHA1(\ldots)$. This final
+XOR operation is done from a unique program point, so the tap point that
+results from it contains only TLS master keys. This points to a
+potential downside of using tap points for introspection: it is not
+always clear in advance how many levels of call stack information will
+be required.
+
+We were succesful in locating tap points for all SSL/TLS clients tested.
+We note that uncovering similar information using traditional techniques
+would have required significant expertise and reverse engineering of
+both open source and proprietary software.
+
+\subsection{SSL Malware}
+\label{sec:eval:subsec:sslmal}
+
+The need to snoop on SSL-encrypted connections arises in malware
+analysis as well. In contrast to the 
+
+\subsection{Finding \texttt{dmesg}}
+\label{sec:eval:subsec:dmesg}
+
+\subsection{Clustering}
+\label{sec:eval:subsec:cluster}
