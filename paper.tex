@@ -1,5 +1,4 @@
-\documentclass[letterpaper,twocolumn,10pt]{article}
-\usepackage{usenix,epsfig,endnotes}
+\documentclass{acm_proc_article-sp}
 
 \newcommand{\fixme}{{\bf XXX\ }}
 
@@ -9,21 +8,29 @@
 \date{}
 
 %make title bold and 14 pt font (Latex default is non-bold, 16 pt)
-\title{\Large \bf Tappan Zee (North) Bridge: Mining Memory Accesses for Introspection}
+\title{Tappan Zee (North) Bridge: Mining Memory Accesses for Introspection}
 
-\author{
-{\rm Brendan Dolan-Gavitt}\\
-Georgia Institute of Technology
-\and
-{\rm Josh Hodosh}\\
-MIT Lincoln Laboratory
-\and
-{\rm Tim Leek}\\
-MIT Lincoln Laboratory
-\and
-{\rm Wenke Lee}\\
-Georgia Institute of Technology
-} % end author
+%\numberofauthors{4}
+%
+%\author{
+%\alignauthor
+%Brendan Dolan-Gavitt\\
+%    \affaddr{Georgia Institute of Technology}\\
+%    \email{brendan@cc.gatech.edu}
+%\alignauthor
+%Josh Hodosh\\
+%    \affaddr{MIT Lincoln Laboratory}\\
+%    \email{josh.hodosh@ll.mit.edu}
+%\and
+%\alignauthor
+%Tim Leek\\
+%    \affaddr{MIT Lincoln Laboratory}\\
+%    \email{tleek@ll.mit.edu}
+%\alignauthor
+%Wenke Lee\\
+%    \affaddr{Georgia Institute of Technology}\\
+%    \email{wenke@cc.gatech.edu}
+%} % end author
 
 \maketitle
 
@@ -31,7 +38,7 @@ Georgia Institute of Technology
 % Comment it out when you first submit the paper for review.
 %\thispagestyle{empty}
 
-\subsection*{Abstract}
+\begin{abstract}
 
 The ability to introspect into the behavior of software at runtime is
 crucial for many security-related tasks, such as virtual machine-based
@@ -49,6 +56,8 @@ efficacy of our techniques by finding tap points for \fixme{number}
 useful introspection tasks such as finding SSL keys and monitoring web
 browser activity on four different operating systems (Windows 7, Linux,
 FreeBSD, and Haiku) and two processor architectures (ARM and x86).
+
+\end{abstract}
 
 \input{introduction}
 
