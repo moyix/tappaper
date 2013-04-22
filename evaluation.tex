@@ -187,10 +187,83 @@ both open source and proprietary software.
 \label{sec:eval:subsec:sslmal}
 
 The need to snoop on SSL-encrypted connections arises in malware
-analysis as well. In contrast to the 
+analysis as well. Two features distinguish this case from that of
+intercepting the traffic of benign SSL clients presented in the previous
+section. First, the ability to decrypt the traffic without a man in the
+middle is even more important: in contrast to benign clients, we cannot
+assume that malware will accept certificates signed by our certificate
+authority. Second, we cannot rely on having access to the server's
+master secret, as the server is under the attacker's control. This means
+that our previous strategy of using a simple string search for the
+master secret will not work here.
+
+Instead, we located the tap point in the SSL-enabled malware by creating
+a PANDA plugin called \texttt{keyfind} that performs trial decryption on
+a packet sent by the malware using each possible 48-byte sequence
+written to memory as a key.  Although this is much slower than a string
+match, it is the only available option, since the key is not known in
+advance.
+
+To test the plugin, we obtained a copy of a version of the Sykipot
+trojan released around October 31st, 2012~\cite{sandymal} (MD5:
+\texttt{34a1010846c0502f490f17b66fb05a12}). We then created a recording
+in which we executed the malware; simultaneously, we captured network
+traffic using texttt{tcpdump}. We noted that the malware made several
+encrypted connections to \url{https://www.hi-techsolutions.org/}, and
+provided one of the encrypted packets from these connections as input to
+the \texttt{keyfind} plugin. The plugin found the same tap point as the
+Windows 7 IE8 experiment described in the previous section, indicating
+that both the malware and IE8 likely use the same underlying system
+mechanism to make SSL connections. The key found was able to decrypt the
+connections contained in the packet dump.\footnote{The malware also has
+a second layer of encryption, which custom and not based on SSL; we did
+not attempt to decrypt this second layer.}
 
 \subsection{Finding \texttt{dmesg}}
 \label{sec:eval:subsec:dmesg}
+
+System logs are an invaluable resource, both for security and system
+administration. In an introspection-based security system, for example,
+one might want to find a tap point that contains the system's logs so
+that they can be stored securely outside the guest virtual machine.
+However, because the format of system logs is particular to each OS, we
+need some mechanism that can find tap points that write data that
+``looks like'' a log based on an exemplar. The statistical search
+described in Section~\ref{sec:technical:subsec:knownunk} is a good fit
+for this task: by training on the output of \texttt{dmesg} on one
+OS, we can find \texttt{dmesg}-like tap points on other systems.
+
+To locate these system log tap points, we first created a training
+exemplar by running the \texttt{dmesg} command on a Debian sid (amd64)
+host, and computing the bigram probabilities for the output. We then
+created recordings in which we booted five operating systems: Debian
+squeeze (armel), Debian squeeze (amd64), Minix R3-2.0 (i386), FreeBSD
+9.0-RELEASE (i386), and Haiku R1 Alpha 3 (i386), and computed the same
+bigram statistics. We then sorted the tap points seen in each operating
+system boot according to their Jensen-Shannon distance from the training
+distribution, and manually examined data written by the tap point for
+each of the top 10 results in each operating system. Table~\ref{} shows,
+for each operating system tested, the tap point that we determined to be
+the system log, and its rank in the search results. We can see that in
+the \fixme{most cases} the result is in the top \fixme{N}.
+
+We also attempted to find an analogous log message tap point on Windows
+7, but were not successful. This is a result of two factors: first,
+Windows typically handles strings internally as UTF-16, which means that
+our ASCII \texttt{dmesg} training example is not statistically similar
+to most tap points that write strings in Windows. Second, the Windows
+logging mechanism is not primarily text-based. Instead, it writes logs
+in the binary EVT format.~\cite{winevt}
+
+Anecdotally, the ability to uncover a tap point that writes the kernel
+logs has also been useful for diagnosing problems when adding support
+for new platforms to QEMU. For an unrelated research task, we attempted
+to boot the Raspberry Pi~\cite{raspberrypi} kernel inside QEMU, but
+found that it hung without displaying any output early on in the boot
+process. By locating the \texttt{dmesg} tap point, we discovered that
+the last log message printed was ``Calibrating delay loop...''; based on
+this we determined that the guest was hung waiting for a timer interrupt
+that was not yet implemented in QEMU.
 
 \subsection{Clustering}
 \label{sec:eval:subsec:cluster}

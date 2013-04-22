@@ -51,8 +51,8 @@ data from different parts of the program into the same tap point. In
 addition, looking only at the program counter would conflate accesses
 from different programs.
 
-Instead, we define tap points as the triple $(caller, program\_counter,
-address\_space)$. Including the caller and the address space (the
+Instead, we define tap points as the triple \[ (caller, program\_counter,
+address\_space) \] Including the caller and the address space (the
 \texttt{CR3} register on x86, and the \fixme{register} on ARM) separates
 out memory accesses into streams that should, in general contain the
 same type of data. Figure \ref{fig:tappoint} shows the effect of
@@ -120,6 +120,7 @@ counter ever equals the length of the string, then we can conclude that
 the tap point has read or written the desired information.
 
 \subsection{Known Unknowns}
+\label{sec:technical:subsec:knownunk}
 
 A second tap point application involves finding tap points for things
 about which we have limited knowledge.
