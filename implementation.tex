@@ -1,2 +1,42 @@
 \section{Implementation}
 \label{sec:implementation}
+
+In this section, we describe both the dynamic analysis platform employed to build TZB, but also TZB-specific algorithmic and data-structure solutions.
+
+\subsection{PANDA}
+TZB makes extensive use of the Platform for Architecture-Neutral Dynamic Analysis (PANDA), which was developed independently by the authors and others at Northeastern University.
+A brief description of PANDA follows.
+
+PANDA is based upon version 1.0.1 of the Qemu machine emulator~\cite{Bellard:2005}.
+Qemu is an excellent and common choice for whole-system dynamic analysis for two main reasons.
+First, performance is good (about 5x slowdown over native).
+Second, every basic block of guest code is disassembled by the host in order to emulate, which means that there are opportunities to interpose analyses at the basic block or even instruction level, if desired.
+Disassembly and code generation is fairly sophisticated in that Qemu lowers instructions to an intermediate language (IL) in order to employ a single back-end code generator, the Tiny Code Generator (TCG).  
+This IL means dynamic analyses can potentially be written once and re-used for all 14 architectures supported by Qemu.
+Further, this version of Qemu is modern enough to be able to boot and run modern operating systems such as Windows 7 (earlier versions of Qemu such as 0.9.1 cannot).
+
+There are three main aspects to PANDA that make it very convenient for building dynamic analyses such at TZB.
+None are earth-shattering in their novelty, but they compose to form a unique and particularly useful system that deserves description (a more detailed technical report on PANDA is forthcoming).
+First, PANDA provides a plug-in architecture that readily permits writing of guest analyses.
+Plug-in code is executed from a number of standard callback locations including instructions, before and after basic blocks, hypercalls, system calls, physical and virtual memory read and writes, etc.  
+[TABLE of callbacks?]
+This is not unlike the schemes employed in Bitblaze and [others?]\cite{Song:2008bitblaze}.
+
+The second aspect of PANDA worth mentioning is its integration of LLVM.
+Qemu lowers basic blocks of guest code to its own IL, which PANDA can, additionally, re-render as basic blocks of LLVM code\footnote{We use a module extracted from S2E~\cite{Chipounov:2011s2e} to lower Qemu's IL to LLVM.}.
+This effectively allows us to write instruction-level PANDA models or analyses without any knowledge of semantic details of any of the 14 ISAs Qemu supports.
+We need only model the small number (about 50) of LLVM instructions correctly.
+This means, for instance, that the dynamic taint analysis we have built for PANDA is architecture-neutral; it can trace taint for ARM and PPC binaries as readily as it can for X86.
+Actually, there is slightly more to PANDA's LLVM integration. 
+Much of the more complicated and esoteric aspects of processor emulation are handled by Qemu via C helper functions.
+Floating point, SIMD, flag calculations, to name just a few such aspects, are all emulated via C functions in Qemu.
+Most dynamic analyses system built atop Qemu either model these high-level instructions explicitly, or suffer gaps in analysis. 
+We chose to include helpers in our analysis, and we do so without manual effort by compiling their C functions with LLVM, and, thus making them available to the same kind of analysis we perform on basic blocks of emulated code~\cite{Whelan:2013architecture}.
+
+The third aspect of PANDA that makes it an excellent dynamic analysis platform is nondeterministic record and replay (RR).  
+In our formulation of RR, we begin a recording by invoking Qemu's built-in snapshot capability.
+Subsequently, we record all inputs to the CPU, including INs, interrupts, and DMA.
+Recording imposes a small overhead (10-20\%) but not enough to perturb execution.
+During replay, we revert to a snapshot and proceed to pull CPU inputs from a log when required.
+Unlike many other RR schemes, we do not record and replay device inputs, which means we cannot ``go live'' at any point during replay.
+But we can perform repeated replays of an entire operating system under arbitrary instrumentation load without worrying about this perturbing application or operating system operation.  
