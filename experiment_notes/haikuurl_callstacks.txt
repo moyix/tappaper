@@ -1,0 +1,75 @@
+00000000027b05e4 BLooper::task_looper()+422
+00000000027a5913 BApplication::DispatchMessage(BMessage*, BHandler*)+47
+00000000027aeaa8 BLooper::DispatchMessage(BMessage*, BHandler*)+80 
+00000000014ff9ea BWebPage::MessageReceived(BMessage*)+714
+00000000014fc630 BWebPage::handleFocused(BMessage const*)+64
+00000000009ac2f5 WebCore::FocusController::setFocused(bool)+101
+0000000001179ce0 WebCore::SelectionController::setFocused(bool)+48
+0000000001179c05 WebCore::SelectionController::focusedOrActiveStateChagned()+165 
+00000000801111d6
+00000000800f7467
+00000000800ec8ad
+000000008011ac88
+0000000080071b93 
+0000000002870aa1 BWindow::task_looper()+555
+000000000024082b ???
+0000000002874557 BWindow::DispatchMessage(BMessage*, BHandler*)+3477
+000000000286fa9d BWindow::_HandleKeyDown(BMessage*)+91
+00000000058d3000
+
+00000000027a5913 BApplication::DispatchMessage(BMessage*, BHandler*)+47
+00000000027aeaa8 BLooper::DispatchMessage(BMessage*, BHandler*)+80 
+00000000014ff9ea BWebPage::MessageReceived(BMessage*)+714
+00000000014fc630 BWebPage::handleFocused(BMessage const*)+64
+00000000009ac2f5 WebCore::FocusController::setFocused(bool)+101
+0000000001179ce0 WebCore::SelectionController::setFocused(bool)+48
+0000000001179c05 WebCore::SelectionController::focusedOrActiveStateChagned()+165
+00000000801111d6
+00000000800f7467
+00000000800ec8ad
+000000008011ac88
+0000000080071b93 
+0000000002870aa1 BWindow::task_looper()
+000000000024082b ???
+00000000028745ca BWindow::DispatchMessage(BMessage*, BHandler*)+3592
+0000000000253721 print_frame_arg-vars+17
+0000000002859583 BTextView::KeyDown(char const*, long)+29
+00000000058d3000
+
+00000000027b05e4 BLooper::task_looper()+422
+00000000027a5913 BApplication::DispatchMessage(BMessage*, BHandler*)+47
+00000000027aeaa8 BLooper::DispatchMessage(BMessage*, BHandler*)+80
+00000000014ffd2a BWebPage::MessageReceived(BMessage*)+1546
+00000000014fd32f BWebPage::paint(BRect, bool)+191
+00000000027ab23e BHandler::LockLooper()+40
+00000000027b02cc BLooper::_Lock()+36
+00000000027b023a BLooper::_Lock(BLooper*, long, long, long)+234
+00000000027aed4b BLooper::_LockComplete(BLooper*, long, long, long, long, long)+57
+0000000000a4d8d9 WebCore::TimerThread::timerThreadEntry(void*)+121
+0000000002c8ec0c acquire_sem_etc+39
+000000000285951c BTextView::_HandleAlphaKey(char const*, long)+410
+0000000002855dbb BTextView::_DoInsertText(char const*, long, long, text_run_array const*)+133
+0000000000253514 print_frame_label_vars+208
+0000000002852bf8 BTextView::InsertText(char const*, long, long, text_run_array const*)+90
+000000000287a6e4 BPrivate::TextGapBuffer::InsertText(char const*, long, long)+112
+00000000ffff0135 memcpy()+29
+00000000058d3000
+
+000000000285fa6e BTwoDimensionalLayout::LocalLayouter::AddConstraints(BTwoDimensionalLayout::CompoundLayouter*, BPrivate::Layout::Layouter*)+174
+00000000027c77b7
+0000000002860c02
+000000000285fe4b BTwoDimensionalLayout::_ValidateMinMax()+33
+000000000285fdff
+000000000285fd60
+000000000285fba9
+000000000285fa79
+00000000027c7769
+0000000002860bca
+000000000285ef64 BTwoDimensionalLayout::LocalLayouter::MaxSize()+58
+000000000287c91e BPrivate::Layout::CollapsingLayouter::MaxSize()+56
+000000000288094b BPrivate::Layout::SimpleLayouter::MaxSize()+29
+00000000801111d6 ???
+00000000014fb501 BWebFrame::LoadURL(BString)+497
+00000000009ff391 WebCore::KURL::KURL(WebCore::KURL const&, WebCore::String const&)+49
+00000000009fe654 WebCore::KURL::init(WebCore::KURL const&, WebCore::String const&, WebCore::TextEncoding const&)+788
+00000000058d3000

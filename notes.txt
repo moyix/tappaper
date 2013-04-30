@@ -1,0 +1,16 @@
+Goal:
+Quickly find points at which to interpose (tap points) for
+introspection.
+
+Technique:
+Watch data as it moves between CPU and memory (i.e. as it is read and
+written) and separate out the contents based on program point. Analyze
+the content produced at each tap point and find ones that write data of
+interest to introspection.
+
+Prerequisites:
+1. The desired data is written to or read from memory at some point.
+2. The behavior which causes the data to be read or written can be
+   induced.
+3. The format of the data can be guessed.
+

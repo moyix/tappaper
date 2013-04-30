@@ -1,0 +1,21 @@
+000000000049d950 ephy_marshal_OBJECT__STRING_OBJECT_FLAGS+160 
+0000000000454d7e ephy_link_open+46
+00007ffff2a60fc3 g_signal_emit+131
+00007ffff2a608bd g_signal_emit_valist+1581
+00007ffff2a5f3f7 ???
+00007ffff2a4947e g_closure_invoke+350
+000000000049d950 ephy_marshal_OBJECT__STRING_OBJECT_FLAGS+160 
+0000000000454d7e ephy_link_open+46
+00007ffff2a60fc3 g_signal_emit+131
+00007ffff2a608bd g_signal_emit_valist+1581
+00007ffff2a5f040 ???
+00007ffff2a4947e g_closure_invoke+350
+000000000049d950 ephy_marshal_OBJECT__STRING_OBJECT_FLAGS+160 
+000000000043d433 ???
+0000000000480023 ephy_web_view_load_url+249
+00007ffff4ec4728 WebCore::KURL::init(WebCore::KURL const&, WebCore::String const&, WebCore::TextEncoding const&)+872
+0000000006ded000
+
+00007ffff51c73c3 webkit_frame_load_uri+195
+00007ffff4ec4728 WebCore::KURL::init(WebCore::KURL const&, WebCore::String const&, WebCore::TextEncoding const&)+872
+0000000006ded000 epiphany-browser

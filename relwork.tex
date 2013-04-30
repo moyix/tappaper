@@ -1,4 +1,55 @@
 \section{Related Work}
 \label{sec:relwork}
 
-We use QEMU~\cite{Bellard:2005}, and this stuff could be used in a system like Lares~\cite{payne:2008}.
+Although, to our knowledge, there is no existing work on mining the
+contents of memory accesses for introspection, we drew inspiration from
+a variety of sources. These can be roughly grouped into three
+categories: work on automating virtual machine introspection, research
+on automated reverse engineering, and efforts that examine memory access
+patterns, typically through visualization. In this section, we describe
+in more detail previous work in these three areas.
+
+Virtual machine introspection has been targeted for automation by
+several recent research efforts because of the \emph{semantic gap
+problem}: security applications running outside the guest virtual
+machine need to reconstruct high-level information from low-level data
+sources, but doing so requires knowledge of internal data structures and
+algorithms that is costly to acquire and maintain. To address this
+problem, researchers have sought ways of bridging this gap
+automatically. Virtuoso~\cite{Dolan-Gavitt:2011uq} uses dynamic traces
+of in-guest programs to extract out-of-guest tools that compute the same
+information. However, because it is based on dynamic analysis,
+incomplete training may cause the generated programs to malfunction. Two
+related approaches attempt to address this limitation: \emph{process
+out-grafting}~\cite{Srinivasan:2011fk} moves monitored processes to the
+security VM while redirecting their system calls to the guest VM,
+allowing tools in the security VM to directly examine the process, while
+VMST~\cite{Fu:2012fk} selectively redirects the memory accesses of tools
+like \texttt{ps} and \texttt{netstat} from the security VM so that their
+results are obtained from the guest VM. TZB extends these approaches by
+finding points in applications and the OS at which to perform active
+introspection.
+
+Based on the observation that memory accesses in dynamic execution can
+reveal the structure of data in memory, several papers have proposed
+methods for automatically deducing the structure of
+protocols~\cite{Caballero:2007fk,Lin:2008uq,Cui:2007kx}, file
+formats~\cite{Cui:2008ys,Lin:2008vn}, and in-memory data
+structures~\cite{Lee:2011,Slowinska:2011ys,Lin:2010}. One particular
+insight we have drawn from this body of work is the idea that the point
+in a program at which a piece of data is accessed, along with its
+calling context, can be used as a proxy for determining the type of the
+data. TZB leverages this insight to separate out memory accesses into
+streams of data that, are of the same type and often have the same
+semantic meaning.
+
+Finally, there has been some research on examining memory accesses made
+by a single program or a whole system, typically using visualization.
+Burzstein et al.~\cite{Bursztein:2011fk} found that by visualizing
+the memory of online strategy games, they could identify the region of
+memory used to decide how much of the in-game map was visible to the
+player, which greatly reduces the work required to create a ``map hack''
+and allow the player to see the entire map at once. Although TZB does
+not use visualization, it shares with this previous work the
+understanding that memory accesses can be a rich source of information
+about a running program.

@@ -6,8 +6,8 @@ Dmesg tests [TODO]
    * Test cases:
      * Debian squeeze armel
      * Debian squeeze amd64
-     * Minix (i386)
-     * FreeBSD (i386)
+     * Minix R3-2.0 (i386)
+     * FreeBSD 9.0 RELEASE (i386)
      * Haiku (i386)
    * Methodology:
      * Capture "training" dmesg by doing dmesg on host (debian sid amd64)

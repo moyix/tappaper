@@ -66,11 +66,12 @@ here when the results are in.}
         \hline
         Browser & Caller & PC \\
         \hline
-        Deb Epiphany (arm) & unknown & \fixme{unknown} \\
-        Deb Epiphany (amd64) & unknown & \fixme{unknown} \\ 
-        Win7 IE8 (x86) & \texttt{0x6ed1351a} & \texttt{0x6ece2b43} \\
-        Win7 Firefox (x86) & \texttt{0x6bb1284c} & \texttt{0x6b1bb561} \\
-        Win7 Opera (x86) &  \texttt{0x6ae819aa} & \texttt{0x6b10434a} \\
+        Deb Epiphany (arm) & \texttt{0x411de294} & \texttt{0x41aca974} \\
+        Deb Epiphany (amd64) & \texttt{0x7ffff51c73c3} & \texttt{0x7ffff4ec4728} \\ 
+        Win7 IE8 (x86) & \texttt{0x6ddc351a} & \texttt{0x6dd92b43} \\
+        Win7 Firefox (x86) & \texttt{0x6b551dd8} & \texttt{0x6b1bb561} \\
+        Win7 Chrome (x86) &  \texttt{0x74e94a65} & \texttt{0x74e94c3c} \\
+        Win7 Opera (x86) &  \texttt{0x6b0ff6c6} & \texttt{0x6af72783} \\
         Haiku WebPositive (x86) & \texttt{0x00253721} & \texttt{0x02859583} \\
         \hline
     \end{tabular}
@@ -208,7 +209,7 @@ To test the plugin, we obtained a copy of a version of the Sykipot
 trojan released around October 31st, 2012~\cite{sandymal} (MD5:
 \texttt{34a1010846c0502f490f17b66fb05a12}). We then created a recording
 in which we executed the malware; simultaneously, we captured network
-traffic using texttt{tcpdump}. We noted that the malware made several
+traffic using \texttt{tcpdump}. We noted that the malware made several
 encrypted connections to \url{https://www.hi-techsolutions.org/}, and
 provided one of the encrypted packets from these connections as input to
 the \texttt{keyfind} plugin. The plugin found the same tap point as the
@@ -219,7 +220,7 @@ connections contained in the packet dump.\footnote{The malware also has
 a second layer of encryption, which custom and not based on SSL; we did
 not attempt to decrypt this second layer.}
 
-\subsection{Finding \texttt{dmesg}}
+\subsection{Finding \large \texttt{dmesg}}
 \label{sec:eval:subsec:dmesg}
 
 System logs are an invaluable resource, both for security and system
@@ -248,12 +249,18 @@ the system log, and its rank in the search results. We can see that in
 the \fixme{most cases} the result is in the top \fixme{N}.
 
 We also attempted to find an analogous log message tap point on Windows
-7, but were not successful. This is a result of two factors: first,
-Windows typically handles strings internally as UTF-16, which means that
-our ASCII \texttt{dmesg} training example is not statistically similar
-to most tap points that write strings in Windows. Second, the Windows
-logging mechanism is not primarily text-based. Instead, it writes logs
-in the binary EVT format.~\cite{winevt}
+7, but were not successful. This is a result of the way Windows logging
+works: rather than logging string-based messages, applications and
+system services create a manifest declaring possible log events, and
+then refer to them by a generated numeric code. Human-readable messages
+are not stored, and instead are generated when the user views the log.
+This means that there is no tap point that will contain log messages of
+the type used in our \texttt{dmesg} training, and the methods described
+in this paper are largely inapplicable unless a training example for the
+binary format can be found. However, because there event log query API
+is public~\cite{evtquery}, existing tools such as
+Virtuoso~\cite{Dolan-Gavitt:2011uq} might be a better fit for this use
+case.
 
 Anecdotally, the ability to uncover a tap point that writes the kernel
 logs has also been useful for diagnosing problems when adding support
