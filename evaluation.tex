@@ -171,8 +171,8 @@ reported here---with only the immediate caller, the tap point contains
 more data than just the SSL/TLS master secret. This is because the
 version of Epiphany uses SSLv3 to make connections, and the
 pseudo-random function (PRF) used in SSLv3 has the form
-$MD5(SHA1(\ldots))$. The other implementations instead use TLSv1.0,
-where the PRF has the form $MD5(\ldots) \oplus SHA1(\ldots)$. This final
+\[ MD5(SHA1(\ldots))\] The other implementations instead use TLSv1.0,
+where the PRF has the form \[ MD5(\ldots) \oplus SHA1(\ldots) \] This final
 XOR operation is done from a unique program point, so the tap point that
 results from it contains only TLS master keys. This points to a
 potential downside of using tap points for introspection: it is not

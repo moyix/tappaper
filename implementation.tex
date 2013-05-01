@@ -4,6 +4,8 @@
 In this section, we describe both the dynamic analysis platform employed to build TZB, but also TZB-specific algorithmic and data-structure solutions.
 
 \subsection{PANDA}
+\label{sec:implementation:subsec:panda}
+
 TZB makes extensive use of the Platform for Architecture-Neutral Dynamic Analysis (PANDA), which was developed independently by the authors and others at Northeastern University.
 A brief description of PANDA follows.
 
@@ -40,3 +42,8 @@ Recording imposes a small overhead (10-20\%) but not enough to perturb execution
 During replay, we revert to a snapshot and proceed to pull CPU inputs from a log when required.
 Unlike many other RR schemes, we do not record and replay device inputs, which means we cannot ``go live'' at any point during replay.
 But we can perform repeated replays of an entire operating system under arbitrary instrumentation load without worrying about this perturbing application or operating system operation.  
+
+\subsection{Callstack Monitoring}
+\label{sec:implementation:subsec:callstack}
+
+

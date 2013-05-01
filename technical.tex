@@ -67,14 +67,14 @@ including the calling context (c), we can finally obtain a tap point
 that contains just the desired information.
 
 Collecting information about the caller is accomplished in TZB in an
-architecture-specific way. On 32-bit x86, we simply read the return
-address off the stack. Aside from a small number of functions which are
-optimized using frame pointer omission, this reliably gets the call site
-for the current function. On other architectures, where stack-walking is
-unreliable, we can run a pass that constructs a shadow stack based on
-function calls and returns, which allows us to generically obtain an
-accurate call stack at all times, but takes extra time up-front to
-compute.
+architecture-neutral way. Because stack walking is, in general,
+unreliable (even on x86, any programs that use frame pointer omission
+will cause stack walking to fail), we run a plugin that maintains a
+shadow stack based on function calls and returns, which allows us to
+generically obtain an accurate call stack at all times, at the cost of
+of a slight slowdown in replay performance. We describe our 
+callstack plugin in more detail in
+Section~\ref{sec:implementation:subsec:callstack}.
 
 Although it is possible that some tap points may require deeper
 information about the calling context (for example, if an application
@@ -83,21 +83,21 @@ level of calling context is usually sufficient. In addition, because TZB
 is a whole-system emulator that can watch every call and return, we can
 obtain the call stack to an arbitrary depth for any tap point. This
 makes it easy to add extra context for a given tap point, if it is found
-that doing so separates out the desired information.
+that doing so separates out the desired information. An example of a tap
+point that requires more than one level of callstack information is
+given in Section~\ref{sec:eval:subsec:ssl}.
 
-\fixme{Might need to cut this paragraph since we haven't tested the tap
-point correlation stuff.} Conversely, one might wonder whether this
-definition of a tap point may split up data that should logically be
-kept together. To address this case, we introduce the idea of
-\emph{correlated tap points}: we can run a pass over the recorded
-execution that notices when two tap points write to adjacent locations
-in memory. The idea is that these tap points may be more usefully
-considered jointly; for example, a single data structure may have its
-fields set by successive writes. These writes would come from different
-program counters, and hence would be split into different tap points,
-but it may be more useful to examine the data structure as a whole. By
-noticing this correlation we can analyze the data from the combined tap
-point.
+Conversely, one might wonder whether this definition of a tap point may
+split up data that should logically be kept together. To address this
+case, we introduce the idea of \emph{correlated tap points}: we can run
+a pass over the recorded execution that notices when two tap points
+write to adjacent locations in memory. The idea is that these tap points
+may be more usefully considered jointly; for example, a single data
+structure may have its fields set by successive writes. These writes
+would come from different program counters, and hence would be split
+into different tap points, but it may be more useful to examine the data
+structure as a whole. By noticing this correlation we can analyze the
+data from the combined tap point.
 
 \subsection{Known Knowns}
 
@@ -142,18 +142,20 @@ points seen in execution, as well as for the exemplar; the data seen at
 each tap point is thus represented as a sparse vector with 65,536
 elements (one for each possible pair of bytes). We can then sort the tap
 points seen by taking the distance (according to some metric) from the
-exemplar. For our metric, we have chosen cosine similarity, which gives
-better results than Euclidean distance on high-dimensional, sparse data.
-It can also be efficiently implemented in terms of sparse matrix
-operations, which is helpful, since we are typically dealing with
-millions of tap points. Cosine similarity for two vectors $u$ and $v$ is
-defined as:
+exemplar. For our metric, we have chosen to use Jensen-Shannon
+divergence~\cite{Lin:2006fk}, which is a smoothed and symmetrized
+version of the classic Kullback-Leibler
+divergence~\cite{Kullback:1951uq} (also known as information gain). We
+also examined the Euclidean and cosine distance metrics, but found their
+performance to be consistently worse than Jensen-Shannon. Jensen-Shannon
+divergence between two probability distributions $P$ and $Q$ is defined
+as:
 
 \[
-1 - \frac{u \cdot v}{||u||_2 ||v||_2}
+JSD(P, Q) = H \left ( \frac{P+Q}{2} \right ) - \frac{H(P)+H(Q)}{2}
 \]
 
-\noindent where $||u||_2$ is defined as the $l^2$-norm of $u$.
+\noindent where $H$ is Shannon entropy.
 
 In addition to statistical comparison to a known exemplar, we can also
 search for data of unknown format if we have access to some external
@@ -190,13 +192,8 @@ large number of tap points. Thus, our use of clustering functions as a
 form of \emph{data triage}.
 
 Our clustering is based on the venerable $k$-means
-algorithm~\cite{Steinhaus:1956kx}, but using the cosine distance measure
-described in the previous section. This variant of $k$-means is known as
-\emph{spherical $k$-means}.~\cite{Dhillon:2001fk} As in the statistical
-search case, we use bigram statistics for our feature vectors, and we
-weight each vector using the well-known ``term frequency-inverse
-document frequency''~\cite{Sparck-Jones:1988uq} statistic from
-information retrieval, which helps increase the effect of rare bigrams
-for distinguishing between different tap points. We evaluate the
-performance of this clustering compared to an expert labeling in
-Section~\ref{sec:eval:subsec:cluster}.
+algorithm~\cite{Steinhaus:1956kx}, but using the Jensen-Shannon
+divergence described in the previous section. As in the statistical
+search case, we use bigram statistics for our feature vectors. We
+evaluate the performance of this clustering compared to an expert
+labeling in Section~\ref{sec:eval:subsec:cluster}.
