@@ -51,20 +51,21 @@ data from different parts of the program into the same tap point. In
 addition, looking only at the program counter would conflate accesses
 from different programs.
 
-Instead, we define tap points as the triple \[ (caller, program\_counter,
-address\_space) \] Including the caller and the address space (the
-\texttt{CR3} register on x86, and the \fixme{register} on ARM) separates
-out memory accesses into streams that should, in general contain the
-same type of data. Figure \ref{fig:tappoint} shows the effect of
-choosing various definitions of a tap point when looking for the place
-where the browser writes the URL entered by the user (``google.com'').
-At the coarsest granularity (a), one can simply look at all writes from
-the CPU to RAM; however, the desired information is buried among reams
-of irrelevant data. Separating out tap points by program and program
-counter (b) is better, but still combines uses of \texttt{strcpy} that
-contain different information --- in this case, a filename and a URL. By
-including the calling context (c), we can finally obtain a tap point
-that contains just the desired information.
+Instead, we define tap points as the triple \[ (caller,
+program\_counter, address\_space) \] Including the caller and the
+address space (the \texttt{CR3} register on x86, and the \texttt{CP15
+c2} register on ARM) separates out memory accesses into streams that
+should, in general contain the same type of data. Figure
+\ref{fig:tappoint} shows the effect of choosing various definitions of a
+tap point when looking for the place where the browser writes the URL
+entered by the user (``google.com'').  At the coarsest granularity (a),
+one can simply look at all writes from the CPU to RAM; however, the
+desired information is buried among reams of irrelevant data.
+Separating out tap points by program and program counter (b) is better,
+but still combines uses of \texttt{strcpy} that contain different
+information --- in this case, a filename and a URL. By including the
+calling context (c), we can finally obtain a tap point that contains
+just the desired information.
 
 Collecting information about the caller is accomplished in TZB in an
 architecture-neutral way. Because stack walking is, in general,
