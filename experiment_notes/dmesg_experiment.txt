@@ -3,14 +3,19 @@ armboot.*.c00471c4.00000000.dat 10, 186, 11423, 305674, 305675 emit_log_char+0x2
 debfailboot.*.ffffffff8104efaa.0000000000000000.dat 4, 5, 6, 7, 17, 20, 23, 34, 139, 591, 671 do_syslog+0x163
 debfailboot.*.ffffffff8104e151.0000000000000000.dat 3, 66, 13323, 500314, 500316 emit_log_char+0x15
 
-haikuboot.00000000800e7551.0000000080128bdc.0000000000000000.dat (file 1 of 30)
+haikuboot.00000000800e7551.0000000080128bdc.0000000000000000.dat (file 1 of 30) 
+    8007b834                  800e7551              80128bdc
+    syslog_sender(void*)+0xf4 ring_buffer_peek+0x59 memcpy_generic+0x14
+
     Note: via tap point correlation we find a second tap point that fills in
-    some "gaps" in the first one.
+    some "gaps" in the first one. Memcpy tail.
     800e7551.80128bdc.00000000 -> 800e7551.80128be5.00000000 14
+
 haikuboot.0000000000203ea2.000000000020434b.0000000001964000.dat (file 2 of 30)
     00203ea2.0020434b.01964000 -> 00203ea2.00204359.01964000 768    (just a null terminator)
 haikuboot.0000000000203dd9.000000000020434b.0000000001964000.dat (file 3 of 30)
     00203dd9.0020434b.01964000 -> 00203dd9.00204359.01964000 767    (just a null terminator)
 
-
 minixboot.00000000190005ee.00000000190009d4.000000003ffd8000.dat (file 8 of 30)
+
+freebsdboot.00000000c0a4ef58.00000000c0a4cd3a.0000000000000000.dat (file 1 of 30) msglogstr+0x28 msgbuf_addstr+0x19a
