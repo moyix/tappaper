@@ -1,17 +1,30 @@
 \section{Limitations and Future Work}
 \label{sec:limitations}
 
-Not applicable to memory analysis \\
+Although TZB is currently very useful for finding interception points
+for \emph{active monitoring}, it is not currently usable in every
+scenario where introspection is needed. Because the interception points
+are triggered by executing code, they are only usable in \emph{online}
+analysis. However, the need for introspection also arises in
+\emph{post-mortem} analysis, specifically in forensic memory analysis.
+Whereas previous solutions such as Virtuoso~\cite{Dolan-Gavitt:2011uq}
+were able to operate equally well on memory images or live virtual
+machines, TZB is only applicable to the live case. In future work, we
+hope to combine Virtuoso-like techniques with TZB to produce offline
+programs that can locate in memory the buffers on which TZB's tap points
+operate.
 
-\noindent Call stack information may be unavailable / costly \\
+Another limitation of TZB is its reliance on callstack information to
+locate interposition points. In current systems, keeping track of an
+arbitrary number of callers for each process is prohibitively expensive;
+although stack walking is faster (since it only needs to be invoked the
+monitored code is executed), it is insecure, unreliable, and not
+available on every architecture. We hope to examine how existing
+solutions such as compiler modifications~\cite{stackshield,Chiueh:2001ys}
+or dynamic binary translation~\cite{Sinnadurai:2008vn} can be used to
+efficiently maintain the shadow stack information needed for TZB.
 
-Remember to cite the notion of a shadow stack, and see if we can find
-something about the security of stack-walking.
-
-\noindent
-Attacks
-
-\begin{itemize}
-\item Split up data reads/writes into noncontiguous chunks and process separately -- obscure semantics
-\item Randomize tap locations using something like JIT
-\end{itemize}
+Finally, as seen in Section~\ref{sec:eval:subsec:cluster}, clustering is
+not currently very useful for finding introspection points of interest.
+We hope to explore more powerful machine learning algorithms to help us
+sift through large numbers of TZB tap points in fugure work.
