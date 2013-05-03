@@ -40,17 +40,14 @@ interpose.
 In this paper, we attempt to address the limitations of past solutions
 by examining a rich source of information about system and application
 activity: memory accesses observed at runtime. Our key insight is that a
-memory access made at a different points in a program \footnote{To deal
-with bulk-copy functions such as \texttt{memcpy}, we require a
-definition of a program point that is slightly stronger than just the
-program counter.  We discuss this in more detail in Section
-\ref{sec:technical}.} can be treated as a streams of information that
-are likely to be of the same type. For example, when visiting a URL, a
-web browser must write to memory the URL that is being visited, and it
-will generally do so at the same point in the program; by intercepting
-memory accesses made at this program point we can observe all URLs
-visited. These program points, which we call \emph{tap points}, provide
-a natural place to interpose to extract security-relevant information.
+memory access made at a different points in a program can be treated as
+a streams of information that are likely to be of the same type. For
+example, when visiting a URL, a web browser must write to memory the URL
+that is being visited, and it will generally do so at the same point in
+the program; by intercepting memory accesses made at this program point
+we can observe all URLs visited. These program points, which we call
+\emph{tap points}, provide a natural place to interpose to extract
+security-relevant information.
 
 There are a several challenges that must be overcome to make use of tap
 points. The first is the sheer amount of data that must be sifted
@@ -73,8 +70,7 @@ add \emph{record and replay} to QEMU, which allows executions to be
 recorded with low overhead. Our heavyweight analyses are then run on
 the replayed execution to analyze every memory access made
 \emph{without} perturbing the system under inspection. We describe our
-system, Tappan Zee Bridge (TZB),\footnote{Please accept our sincere
-apologies for this pun.} in detail in
+system, Tappan Zee Bridge (TZB), in detail in
 Section~\ref{sec:implementation}.
 
 Finally, previous systems have required a significant amount of effort

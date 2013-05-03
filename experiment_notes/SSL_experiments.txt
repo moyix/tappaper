@@ -2,6 +2,9 @@ Methodology: Open browser, go to custom server that prints master key,
 search for master key tap point, finally look up tap point to see where
 it is.
 
+./openssl s_server -www
+
+
 === Windows 7 SP1 ===
 
 Internet Explorer 8.0.7601.17514
@@ -42,24 +45,88 @@ EIP:     Opera.dll+0x50251
 
 === Debian squeeze amd64 ===
 
-Openssl s_client 0.9.8
+Openssl s_client 0.9.8o
 Process: openssl
 
-Caller:  unknown (FIXME)
-RIP:     libssl.so.0.9.8!tls1_generate_master_secret+0x108
+0x00007ffff7bb41b3 ssl23_write+67
+0x00007ffff7bb3af3 ssl23_connect+1715
+0x00007ffff7babb43 ssl3_connect+1235
+0x00007ffff7ba8c77 ssl3_send_client_key_exchange+1079
+0x00007ffff7bb6998 tls1_generate_master_secret+472
 
-Epiphany [version: FIXME]
-Process: epiphany-browser
+Epiphany 2.30.6
 
-Caller:  unknown (FIXME)
-RIP:     0x7f042cd435be (md5_write+302)
+00007ffff079baa7 gnutls_handshake+55
+00007ffff079a475 _gnutls_handshake_common+53
+00007ffff0799c96 _gnutls_recv_handshake+694
+00007ffff0797ab4 _gnutls_ssl3_finished+180
+00007ffff07a0727 _gnutls_mac_deinit_ssl3_handshake+423
+00007ffff07b97b9 wrap_gcry_md_write+9
+00007ffff051f8a0 md_write+96
+00007ffff05434d9 md5_write+73
 
 Note: SSLv3, so PRF outer layer is plain MD5
 
 === Debian squeeze armel ===
 
-Openssl s_client 0.9.8
+Openssl s_client 0.9.8o
 Process: openssl
 
-Caller:  unknown (FIXME)
-R15:     libssl.so.0.9.8!tls1_PRF+0x144
+40054d60 ssl3_connect+1236
+40051e78 ssl3_send_client_key_exchange+964
+4005e6b0 tls1_generate_master_secret+156
+4005e5f8 tls1_PRF+144
+
+Epiphany 2.30.6
+
+41c7abb0 gnutls_handshake+68
+41c790ec _gnutls_handshake_common+72
+41c787b4 _gnutls_recv_handshake_final+636
+41c763fc _gnutls_ssl3_finished+152
+41c801b0 _gnutls_mac_deinit_ssl3_handshake+252
+41c7f520 _gnutls_hash+64
+41c9bed8 wrap_gcry_md_write+8
+41d026c4 gcry_md_write+40
+41d15d08 md_write+116
+41d3f04c md5_write+220
+41d3f014 md5_write+164
+41d3e5bc transform+40
+41aca8f8 memcpy+40
+
+41c7abb0 gnutls_handshake+68
+41c790ec _gnutls_handshake_common+72
+41c787b4 _gnutls_recv_handshake_final+636
+41c763fc _gnutls_ssl3_finished+152
+41c801b0 _gnutls_mac_deinit_ssl3_handshake+252
+41c7f520 _gnutls_hash+64
+41c9bed8 wrap_gcry_md_write+8
+41d026c4 gcry_md_write+40
+41d15d08 md_write+116
+41d3f04c md5_write+220
+41d3f014 md5_write+164
+41d3e5bc transform+40
+41aca900 memcpy+48
+
+41c7abb0 gnutls_handshake+68
+41c790ec _gnutls_handshake_common+72
+41c787b4 _gnutls_recv_handshake_final+636
+41c763fc _gnutls_ssl3_finished+152
+41c80218 _gnutls_mac_deinit_ssl3_handshake+356
+41c7f520 _gnutls_hash+64
+41c9bed8 wrap_gcry_md_write+8
+41d026c4 gcry_md_write+40
+41d15d08 md_write+116
+41d3efd8 md5_write+104
+
+41c7abb0 gnutls_handshake+68
+41c790ec _gnutls_handshake_common+72
+41c787b4 _gnutls_recv_handshake_final+636
+41c763fc _gnutls_ssl3_finished+152
+41c80218 _gnutls_mac_deinit_ssl3_handshake+356
+41c7f520 _gnutls_hash+64
+41c9bed8 wrap_gcry_md_write+8
+41d026c4 gcry_md_write+40
+41d15d08 md_write+116
+41d3efe4 md5_write+116
+
+===
