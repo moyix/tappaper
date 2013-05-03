@@ -10,6 +10,12 @@ was also generally performed on a variety of different operating sytems,
 applications, and architectures in order to evaluate TZB's ability to
 handle a diverse range of introspection targets.
 
+For the sake of readability, we have attempted to use symbolic names for
+addresses wherever possible in the following results. It is hoped that
+these will be more meaningful to the reader than the raw addresses, but
+we emphasize that debug information is in no way required for TZB to
+work.
+
 \subsection{File Access}
 \label{sec:eval:subsec:file}
 
@@ -59,7 +65,7 @@ here when the results are in.}
 \subsection{URL Access}
 \label{sec:eval:subsec:url}
 
-\begin{table}
+\begin{table*}
     \centering
     \small
     \begin{tabular}{|l|l|l|}
@@ -67,18 +73,18 @@ here when the results are in.}
         Browser & Caller & PC \\
         \hline
         Deb Epiphany (arm) & \texttt{0x411de294} & \texttt{0x41aca974} \\
-        Deb Epiphany (amd64) & \texttt{0x7ffff51c73c3} & \texttt{0x7ffff4ec4728} \\ 
-        Win7 IE8 (x86) & \texttt{0x6ddc351a} & \texttt{0x6dd92b43} \\
-        Win7 Firefox (x86) & \texttt{0x6b551dd8} & \texttt{0x6b1bb561} \\
-        Win7 Chrome (x86) &  \texttt{0x74e94a65} & \texttt{0x74e94c3c} \\
+        Deb Epiphany (amd64) & \texttt{webkit\_frame\_load\_uri+0xc3} & \texttt{WebCore::KURL::init+0x368} \\ 
+        Win7 IE8 (x86) & \texttt{ieframe!CAddressEditBox::\_Execute+0xaa} & \texttt{ieframe!StringCchCopyW+0x50} \\
+        Win7 Firefox (x86) & \texttt{xul!nsAutoString::nsAutoString+0x1a} & \texttt{xul!nsAString\_internal::Assign+0x1d} \\
+        Win7 Chrome (x86) &  \texttt{msftedit!CTxtEdit::OnTxChar+0x105} & \texttt{msftedit!CTxtSelection::PutChar+0xb8} \\
         Win7 Opera (x86) &  \texttt{0x6b0ff6c6} & \texttt{0x6af72783} \\
-        Haiku WebPositive (x86) & \texttt{0x00253721} & \texttt{0x02859583} \\
+        Haiku WebPositive (x86) & \fixme{} & \fixme{} \\
         \hline
     \end{tabular}
 \caption{Tap points found that write the URL typed into the browser by
 the user.}
 \label{tbl:url}
-\end{table}
+\end{table*}
 
 As with file access, monitoring visited URLs is likely to be of use to
 host-based intrusion detection and prevention systems. For example, an
@@ -93,17 +99,11 @@ To find URL tap points, we created training executions by visiting a set
 of three URLs (Google, Facebook, and Bing) the following operating
 systems and browsers: Epiphany on Debian squeeze (armel and amd64);
 Firefox 16.0.2, Opera 12.10, and Internet Explorer 8.0.7601.17514 on
-Windows 7 SP1 (x86); and WebPositive on Haiku (x86). As with the file
-access case, we used the \texttt{stringsearch} plugin to search for the
-ASCII and UTF-16 representations of the three URLs, and then validated
-each tap point found to ensure that it wrote only the desired data. The
-results can be seen in Table~\ref{tbl:url}.
-
-\fixme{We need to fix the caller information for amd64 and arm before
-we submit. Also hopefully this will make the Opera result better---right
-now each URL gets put into its own tap point, probably because of FPO;
-the tap listed does contain every URL, but also contains some extra
-infomration.}
+Windows 7 SP1 (x86); and WebPositive r580 on Haiku (x86). As with the
+file access case, we used the \texttt{stringsearch} plugin to search for
+the ASCII and UTF-16 representations of the three URLs, and then
+validated each tap point found to ensure that it wrote only the desired
+data. The results can be seen in Table~\ref{tbl:url}.
 
 \subsection{TLS/SSL Master Secrets}
 \label{sec:eval:subsec:ssl}
@@ -115,9 +115,11 @@ infomration.}
         \hline
         Client & Caller & PC & Process \\
         \hline
-        Deb OpenSSL (arm) & unknown & \texttt{tls1\_PRF+0x144} & openssl \\
-        Deb OpenSSL (amd64) & unknown & \texttt{tls1\_generate\_master\_secret+0x108} & openssl \\ 
-        Deb Epiphany (amd64) & unknown & \texttt{md5\_write+302} & epiphany \\ 
+        Deb OpenSSL (arm) & tls1\_generate\_master\_secret+0x9c & \texttt{tls1\_PRF+0x90} & openssl \\
+        Deb OpenSSL (amd64) & \texttt{ssl3\_send\_client\_key\_exchange+0x437} & \texttt{tls1\_generate\_master\_secret+0x108} & openssl \\
+        Deb Epiphany (arm) & \texttt{md\_write+0x74} & \texttt{md5\_write+0x68} & epiphany \\ 
+        Deb Epiphany (amd64) & \texttt{md\_write+0x60} & \texttt{md5\_write+0x49} & epiphany \\ 
+        Haiku WebPositive (x86) & \texttt{tls1\_generate\_master\_secret+0x65} & \texttt{tls1\_PRF+0x14b} & WebPositive \\
         Win7 Chrome (x86) & \texttt{\_NSC\_DeriveKey+0x1241} & \texttt{\_TLS\_PRF+0xa0} & chrome.exe \\
         Win7 IE8 (x86) & \texttt{\_Tls1ComputeMasterKey@32+0x57} & \texttt{\_PRF@40} & lsass.exe \\
         Win7 Firefox (x86) & unknown & \texttt{\_TLS\_PRF+0xbb} & firefox.exe \\

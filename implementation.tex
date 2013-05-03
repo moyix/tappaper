@@ -1,49 +1,204 @@
 \section{Implementation}
 \label{sec:implementation}
 
-In this section, we describe both the dynamic analysis platform employed to build TZB, but also TZB-specific algorithmic and data-structure solutions.
+In this section, we describe both the dynamic analysis platform employed to
+build TZB, but also TZB-specific algorithmic and data-structure solutions.
 
 \subsection{PANDA}
 \label{sec:implementation:subsec:panda}
 
-TZB makes extensive use of the Platform for Architecture-Neutral Dynamic Analysis (PANDA), which was developed independently by the authors and others at Northeastern University.
-A brief description of PANDA follows.
+TZB makes extensive use of the Platform for Architecture-Neutral Dynamic
+Analysis (PANDA), which was developed by the authors in collaboration
+with Northeastern University. A brief description of PANDA follows.
 
-PANDA is based upon version 1.0.1 of the Qemu machine emulator~\cite{Bellard:2005}.
-Qemu is an excellent and common choice for whole-system dynamic analysis for two main reasons.
-First, performance is good (about 5x slowdown over native).
-Second, every basic block of guest code is disassembled by the host in order to emulate, which means that there are opportunities to interpose analyses at the basic block or even instruction level, if desired.
-Disassembly and code generation is fairly sophisticated in that Qemu lowers instructions to an intermediate language (IL) in order to employ a single back-end code generator, the Tiny Code Generator (TCG).  
-This IL means dynamic analyses can potentially be written once and re-used for all 14 architectures supported by Qemu.
-Further, this version of Qemu is modern enough to be able to boot and run modern operating systems such as Windows 7 (earlier versions of Qemu such as 0.9.1 cannot).
+PANDA is based upon version 1.0.1 of the QEMU machine
+emulator~\cite{Bellard:2005}. QEMU is an excellent and common choice
+for whole-system dynamic analysis for two main reasons. First,
+performance is good (about 5x slowdown over native). Second, every basic
+block of guest code is disassembled by the host in order to emulate,
+which means that there are opportunities to interpose analyses at the
+basic block or even instruction level, if desired. Disassembly and code
+generation is fairly sophisticated in that QEMU lowers instructions to
+an intermediate language (IL) in order to employ a single back-end code
+generator, the Tiny Code Generator (TCG). This IL means dynamic
+analyses can potentially be written once and re-used for all 14
+architectures supported by QEMU. Further, this version of QEMU is modern
+enough to be able to boot and run modern operating systems such as
+Windows 7 (earlier versions of QEMU such as 0.9.1 cannot).
 
-There are three main aspects to PANDA that make it very convenient for building dynamic analyses such at TZB.
-None are earth-shattering in their novelty, but they compose to form a unique and particularly useful system that deserves description (a more detailed technical report on PANDA is forthcoming).
-First, PANDA provides a plug-in architecture that readily permits writing of guest analyses.
-Plug-in code is executed from a number of standard callback locations including instructions, before and after basic blocks, hypercalls, system calls, physical and virtual memory read and writes, etc.  
-[TABLE of callbacks?]
-This is not unlike the schemes employed in Bitblaze and [others?]\cite{Song:2008bitblaze}.
+There are three main aspects to PANDA that make it very convenient for
+building dynamic analyses such as TZB. None are earth-shattering in
+their novelty, but they compose to form a unique and particularly useful
+system that deserves description (a more detailed technical report on
+PANDA is forthcoming). First, PANDA provides a plug-in architecture that
+readily permits writing guest analyses in C and C++. Plug-in code is
+executed from a number of standard callback locations including
+instructions, before and after basic blocks, hypercalls, system calls,
+physical and virtual memory read and writes, etc. This is not unlike the
+schemes employed in other whole-system dynamic analysis platforms such
+as BitBlaze~\cite{Song:2008bitblaze} and S2E~\cite{Chipounov:2011s2e}.In
+addition, plugins can export functionality that can then be used in
+other plugins, allowing complex functionality to be built up from simple
+components. For example, most plugins in TZB use the callstack plugin
+(described below) to determine their calling context; this means that
+the analysis plugins need not worry about the messy details of how to
+track calls and returns across different architectures. From a software
+engineering perspective, PANDA's plugin architecture allows the various
+analyses supported by TZB to be cleanly separated from the main
+emulator, which makes for a much more comprehensible and maintainable
+codebase.
 
-The second aspect of PANDA worth mentioning is its integration of LLVM.
-Qemu lowers basic blocks of guest code to its own IL, which PANDA can, additionally, re-render as basic blocks of LLVM code\footnote{We use a module extracted from S2E~\cite{Chipounov:2011s2e} to lower Qemu's IL to LLVM.}.
-This effectively allows us to write instruction-level PANDA models or analyses without any knowledge of semantic details of any of the 14 ISAs Qemu supports.
-We need only model the small number (about 50) of LLVM instructions correctly.
-This means, for instance, that the dynamic taint analysis we have built for PANDA is architecture-neutral; it can trace taint for ARM and PPC binaries as readily as it can for X86.
-Actually, there is slightly more to PANDA's LLVM integration. 
-Much of the more complicated and esoteric aspects of processor emulation are handled by Qemu via C helper functions.
-Floating point, SIMD, flag calculations, to name just a few such aspects, are all emulated via C functions in Qemu.
-Most dynamic analyses system built atop Qemu either model these high-level instructions explicitly, or suffer gaps in analysis. 
-We chose to include helpers in our analysis, and we do so without manual effort by compiling their C functions with LLVM, and, thus making them available to the same kind of analysis we perform on basic blocks of emulated code~\cite{Whelan:2013architecture}.
+The second aspect of PANDA that makes it an excellent dynamic analysis
+platform is nondeterministic record and replay (RR). In our formulation
+of RR, we begin a recording by invoking QEMU's built-in snapshot
+capability. Subsequently, we record all inputs to the CPU, including
+INs, interrupts, and DMA. Recording imposes a small overhead (10-20\%)
+but not enough to perturb execution. During replay, we revert to a
+snapshot and proceed to pull CPU inputs from a log when required.
+Unlike many other RR schemes, we do not record and replay device inputs,
+which means we cannot ``go live'' at any point during replay. But we
+can perform repeated replays of an entire operating system under
+arbitrary instrumentation load without worrying about this perturbing
+application or operating system operation. This capability is vital to
+TZB: without record and replay, the heavyweight analyses we perform
+would make the system unusably slow.
 
-The third aspect of PANDA that makes it an excellent dynamic analysis platform is nondeterministic record and replay (RR).  
-In our formulation of RR, we begin a recording by invoking Qemu's built-in snapshot capability.
-Subsequently, we record all inputs to the CPU, including INs, interrupts, and DMA.
-Recording imposes a small overhead (10-20\%) but not enough to perturb execution.
-During replay, we revert to a snapshot and proceed to pull CPU inputs from a log when required.
-Unlike many other RR schemes, we do not record and replay device inputs, which means we cannot ``go live'' at any point during replay.
-But we can perform repeated replays of an entire operating system under arbitrary instrumentation load without worrying about this perturbing application or operating system operation.  
+The final aspect of PANDA worth mentioning is its integration of LLVM.
+QEMU lowers basic blocks of guest code to its own IL, which PANDA can,
+additionally, re-render as basic blocks of LLVM code\footnote{We use a
+module extracted from S2E~\cite{Chipounov:2011s2e} to lower QEMU's IL to
+LLVM.}. This effectively allows us to write instruction-level PANDA
+models or analyses without any knowledge of semantic details of any of
+the 14 ISAs QEMU supports. We need only model the small number (about
+50) of LLVM instructions correctly. This means, for instance, that the
+dynamic taint analysis we have built for PANDA is architecture-neutral;
+it can trace taint for ARM and PPC binaries as readily as it can for
+x86. Actually, there is slightly more to PANDA's LLVM integration.
+Much of the more complicated and esoteric aspects of processor emulation
+are handled by QEMU via C helper functions. Floating point, SIMD, flag
+calculations, to name just a few such aspects, are all emulated via C
+functions in QEMU. Most dynamic analyses system built atop QEMU either
+model these high-level instructions explicitly, or suffer gaps in
+analysis. We chose to include helpers in our analysis, and we do so
+without manual effort by compiling their C functions with LLVM, and,
+thus making them available to the same kind of analysis we perform on
+basic blocks of emulated code~\cite{Whelan:2013architecture}. Although
+LLVM translation is not currently used by TZB, we anticipate using it
+for sophisiticated cross-platform analyses in future work.
 
 \subsection{Callstack Monitoring}
 \label{sec:implementation:subsec:callstack}
 
+As explained in Section~\ref{sec:technical:subsec:tapdef}, tap points
+need information about the calling context. Keeping track of this
+information requires some knowledge about the CPU architecture on which
+the OS is running, and so we decided to encapsulate this task into a
+single plugin. TZB's other analyses can then query the current call
+stack to arbitrary depth by invoking \texttt{get\_callers} and not worry
+about the details described in this section.
 
+To track call stack information, the \texttt{callstack} plugin examines
+each basic block as it is translated, looking for an
+(architecture-specific) call instruction. For x86, we rely on the
+diStorm3~\cite{distorm} disassembler, which supports both x86 and amd64
+and abstracts away the many different forms the call instruction can
+take. On ARM, the instruction set is relatively simple, and we just use
+a poor man's disassembler based on matching bytes, looking for two
+idioms that indicate a call: \texttt{bl} and \texttt{mov lr, pc}. If the
+block includes a call instruction, then we push the return address onto
+a shadow stack after each time that block executes.
+
+Detecting the return from a function does not require any
+architecture-specific code. Before the execution of every basic block,
+we check whether the address we are about to execute is at the top of
+the stack; if so, we pop it. We only need to check the starting address
+of the basic block, because by definition a return terminates a basic
+block, so the return address will always fall at the beginning of a
+block.
+
+An additional complication is that a single process may have multiple
+threads, which implies multiple independent call stacks. To deal with
+this, we implemented an optional feature in the call stack plugin that
+monitors changes in the stack pointer, and creates a new shadow call
+stack when the value of the stack pointer jumps by more than a fixed
+threshold (currently 5000 bytes, a parameter we determined empirically).
+This extra precision comes at a performance penalty, however
+(approximately 2x slowdown over normal shadow stack tracking), and for
+TZB we usually only need one level of caller information, so the results
+given in this paper do not use this feature.
+
+We note that these techniques may fail if traditional call/return
+semantics are violated. For example, if a program emulated calls and
+returns by manually pushing the return address and using a direct jump,
+it would not be detected as a call. However, for non-malicious
+compiler-generated code, we have found that the algorithm described here
+works well.
+
+\subsection{Fixed String Searching}
+\label{sec:implementation:subsec:stringsearch}
+
+Searching for fixed strings is one of the most effective tools for
+finding useful tap points. Because we have to sift through many
+gigabytes of data that pass through tap points during any given
+execution, it is vital that string search be efficient in both time and
+space.
+
+To satisfy these constraints, we developed a string matching algorithm
+that requires only one byte of memory per search string and per tap
+point. This one-byte counter tracks, for a given tap point, how many
+bytes of the search string have been matched by the data seen at the tap
+point so far. Whenever a byte is read from or written to memory, we can
+check what the next byte in the search string is using this position,
+and compare it to the byte passing through the tap point. If it matches,
+the counter is incremented; if it does not match, the counter is reset
+to zero. When the counter equals the length of the search string, we
+know that the search string has passed through the tap point, and we
+report a match. Note that because the counter is only one byte, our
+matcher only supports strings up to 256 bytes long; this cap could be
+easily raised to 65,536 bytes by using a two-byte counter, at the cost
+of doubling the memory requirements. Thus far, 256-byte strings have
+been more than sufficient.
+
+This effectively implements a very simple deterministic finite automaton
+(DFA) matcher. Indeed, we believe that it should be possible to
+efficiently implement a streaming basic regular expression matcher that
+only an amount of memory logarithmic in the number of states needed to
+represent the expression. We leave this generalization to future work,
+however.
+
+\subsection{Bigram Collection and Statistical Search}
+\label{sec:implementation:subsec:stringsearch}
+
+Collecting bigram statistics on data that passes through each tap point
+is an efficient way to enable ``fuzzy'' search based based on some
+training examples, as well as enabling clustering. Bigram collection is
+done by maintaining, for each tap point, two pieces of information: (1)
+the last byte that passed through by the tap point, so that we can see
+bigrams that span a single memory access; (2) a histogram of all byte
+pairs seen at the tap point. The latter of these must be maintained
+sparsely: because our bigrams are based on bytes, a dense histogram
+would require 65,536 integers' worth of storage per tap point. Given
+that most of the executions examined in this paper contain upwards of
+500,000 tap points, this would require more than 120GB of memory, which
+is clearly infeasible (and wasteful, since most of those entries would
+be zero).
+
+Instead, we store the histogram sparsely, using a C++ Standard Template
+Library \texttt{std::map<uint16\_t,int>}. This keeps memory usage down
+without sacrificing any accuracy, but it does introduce some extra
+complexity when processing the resulting histograms, as our search
+software must support sparse vectors rather than simple arrays. Because
+of this additional complexity, we opted to implement the search and
+clustering algorithms ourselves, after some initial prototyping using
+SciPy's \texttt{sklearn} toolkit.
+
+Our statistical search tool is implemented in 246 lines of C++, and
+computes the Jensen-Shannon divergence between a training histogram
+(dense) and a set of sparse histograms. Our K-Means clustering tool is
+481 lines of C++ code, and outputs a clustering of the sparse histograms
+using Jensen-Shannon divergence as a distance metric.\footnote{The use
+of this distance metric is justified theoretically because
+Jensen-Shannon distance is a Bregman divergence~\cite{Banerjee:2005qf}
+and empirically because our clustering typically converges after around
+30 iterations.} Both tools are multithreaded, which greatly speeds up the
+computation.

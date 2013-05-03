@@ -48,22 +48,22 @@ EIP:     Opera.dll+0x50251
 Openssl s_client 0.9.8o
 Process: openssl
 
-0x00007ffff7bb41b3 ssl23_write+67
-0x00007ffff7bb3af3 ssl23_connect+1715
-0x00007ffff7babb43 ssl3_connect+1235
-0x00007ffff7ba8c77 ssl3_send_client_key_exchange+1079
-0x00007ffff7bb6998 tls1_generate_master_secret+472
+0x00007ffff7bb41b3 ssl23_write+0x43
+0x00007ffff7bb3af3 ssl23_connect+0x6b3
+0x00007ffff7babb43 ssl3_connect+0x4d3
+0x00007ffff7ba8c77 ssl3_send_client_key_exchange+0x437
+0x00007ffff7bb6998 tls1_generate_master_secret+0x1d8
 
 Epiphany 2.30.6
 
-00007ffff079baa7 gnutls_handshake+55
-00007ffff079a475 _gnutls_handshake_common+53
-00007ffff0799c96 _gnutls_recv_handshake+694
-00007ffff0797ab4 _gnutls_ssl3_finished+180
-00007ffff07a0727 _gnutls_mac_deinit_ssl3_handshake+423
-00007ffff07b97b9 wrap_gcry_md_write+9
-00007ffff051f8a0 md_write+96
-00007ffff05434d9 md5_write+73
+00007ffff079baa7 gnutls_handshake+0x37
+00007ffff079a475 _gnutls_handshake_common+0x35
+00007ffff0799c96 _gnutls_recv_handshake+0x2b6
+00007ffff0797ab4 _gnutls_ssl3_finished+0xb4
+00007ffff07a0727 _gnutls_mac_deinit_ssl3_handshake+0x1a7
+00007ffff07b97b9 wrap_gcry_md_write+0x9
+00007ffff051f8a0 md_write+0x60
+00007ffff05434d9 md5_write+0x49
 
 Note: SSLv3, so PRF outer layer is plain MD5
 
@@ -72,61 +72,81 @@ Note: SSLv3, so PRF outer layer is plain MD5
 Openssl s_client 0.9.8o
 Process: openssl
 
-40054d60 ssl3_connect+1236
-40051e78 ssl3_send_client_key_exchange+964
-4005e6b0 tls1_generate_master_secret+156
-4005e5f8 tls1_PRF+144
+40054d60 ssl3_connect+0x4d4
+40051e78 ssl3_send_client_key_exchange+0x3c4
+4005e6b0 tls1_generate_master_secret+0x9c
+4005e5f8 tls1_PRF+0x90
 
 Epiphany 2.30.6
 
-41c7abb0 gnutls_handshake+68
-41c790ec _gnutls_handshake_common+72
-41c787b4 _gnutls_recv_handshake_final+636
-41c763fc _gnutls_ssl3_finished+152
-41c801b0 _gnutls_mac_deinit_ssl3_handshake+252
-41c7f520 _gnutls_hash+64
-41c9bed8 wrap_gcry_md_write+8
-41d026c4 gcry_md_write+40
-41d15d08 md_write+116
-41d3f04c md5_write+220
-41d3f014 md5_write+164
-41d3e5bc transform+40
-41aca8f8 memcpy+40
+41c7abb0 gnutls_handshake+0x44
+41c790ec _gnutls_handshake_common+0x48
+41c787b4 _gnutls_recv_handshake_final+0x27c
+41c763fc _gnutls_ssl3_finished+0x98
+41c801b0 _gnutls_mac_deinit_ssl3_handshake+0xfc
+41c7f520 _gnutls_hash+0x40
+41c9bed8 wrap_gcry_md_write+0x8
+41d026c4 gcry_md_write+0x28
+41d15d08 md_write+0x74
+41d3f04c md5_write+0xdc
+41d3f014 md5_write+0xa4
+41d3e5bc transform+0x28
+41aca8f8 memcpy+0x28
 
-41c7abb0 gnutls_handshake+68
-41c790ec _gnutls_handshake_common+72
-41c787b4 _gnutls_recv_handshake_final+636
-41c763fc _gnutls_ssl3_finished+152
-41c801b0 _gnutls_mac_deinit_ssl3_handshake+252
-41c7f520 _gnutls_hash+64
-41c9bed8 wrap_gcry_md_write+8
-41d026c4 gcry_md_write+40
-41d15d08 md_write+116
-41d3f04c md5_write+220
-41d3f014 md5_write+164
-41d3e5bc transform+40
-41aca900 memcpy+48
+41c7abb0 gnutls_handshake+0x44
+41c790ec _gnutls_handshake_common+0x48
+41c787b4 _gnutls_recv_handshake_final+0x27c
+41c763fc _gnutls_ssl3_finished+0x98
+41c801b0 _gnutls_mac_deinit_ssl3_handshake+0xfc
+41c7f520 _gnutls_hash+0x40
+41c9bed8 wrap_gcry_md_write+0x8
+41d026c4 gcry_md_write+0x28
+41d15d08 md_write+0x74
+41d3f04c md5_write+0xdc
+41d3f014 md5_write+0xa4
+41d3e5bc transform+0x28
+41aca900 memcpy+0x30
 
-41c7abb0 gnutls_handshake+68
-41c790ec _gnutls_handshake_common+72
-41c787b4 _gnutls_recv_handshake_final+636
-41c763fc _gnutls_ssl3_finished+152
-41c80218 _gnutls_mac_deinit_ssl3_handshake+356
-41c7f520 _gnutls_hash+64
-41c9bed8 wrap_gcry_md_write+8
-41d026c4 gcry_md_write+40
-41d15d08 md_write+116
-41d3efd8 md5_write+104
+41c7abb0 gnutls_handshake+0x44
+41c790ec _gnutls_handshake_common+0x48
+41c787b4 _gnutls_recv_handshake_final+0x27c
+41c763fc _gnutls_ssl3_finished+0x98
+41c80218 _gnutls_mac_deinit_ssl3_handshake+0x164
+41c7f520 _gnutls_hash+0x40
+41c9bed8 wrap_gcry_md_write+0x8
+41d026c4 gcry_md_write+0x28
+41d15d08 md_write+0x74
+41d3efd8 md5_write+0x68
 
-41c7abb0 gnutls_handshake+68
-41c790ec _gnutls_handshake_common+72
-41c787b4 _gnutls_recv_handshake_final+636
-41c763fc _gnutls_ssl3_finished+152
-41c80218 _gnutls_mac_deinit_ssl3_handshake+356
-41c7f520 _gnutls_hash+64
-41c9bed8 wrap_gcry_md_write+8
-41d026c4 gcry_md_write+40
-41d15d08 md_write+116
-41d3efe4 md5_write+116
+41c7abb0 gnutls_handshake+0x44
+41c790ec _gnutls_handshake_common+0x48
+41c787b4 _gnutls_recv_handshake_final+0x27c
+41c763fc _gnutls_ssl3_finished+0x98
+41c80218 _gnutls_mac_deinit_ssl3_handshake+0x164
+41c7f520 _gnutls_hash+0x40
+41c9bed8 wrap_gcry_md_write+0x8
+41d026c4 gcry_md_write+0x28
+41d15d08 md_write+0x74
+41d3efe4 md5_write+0x74
 
-===
+=== Haiku x86 ===
+
+WebPositive r580
+
+00000000027aec53 BLooper::MessageFromPort(long long)+0x21 in section .text
+00000000027aebfd BLooper::ReadMessageFromPort(long long)+0x27 in section .text
+00000000027aeb68 BLooper::ReadRawFromPort(long*, long long)+0x34 in section .text
+0000000002c8e917 port_buffer_size_etc+0x24 in section .text
+00000000801114ba x86_sysenter+0x2e in section .text
+00000000801113a2 pre_syscall_debug_done+0x2 in section .text
+000000008005c199 _user_port_buffer_size_etc+0x8d in section .text
+000000008005aee5 port_buffer_size_etc+0x25 in section .text
+000000008005b05d _get_port_message_info_etc+0x169 in section .text
+0000000080049de8 ConditionVariableEntry::Wait(unsigned long, long long)+0x144 in section .text
+00000000817a32d1 No symbol matches 0x00000000817a32d1.
+000000008005e132 acquire_sem_etc+0x26 in section .text
+000000008005e4d4 switch_sem_etc+0x374 in section .text
+000000008006e3cd thread_block_with_timeout_locked+0xed in section .text
+000000000306e04e ssl3_send_client_key_exchange+0x602 in section .text
+000000000307a641 tls1_generate_master_secret+0x65 in section .text
+000000000307944b tls1_PRF+0x14b in section .text

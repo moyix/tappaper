@@ -30,6 +30,7 @@ points where the type and format of the data sought are not known, and
 we are instead simply trying to find ``interesting'' tap points.
 
 \subsection{Defining Tap Points}
+\label{sec:technical:subsec:tapdef}
 
 \begin{figure}[t]
 \begin{center}
@@ -58,7 +59,7 @@ c2} register on ARM) separates out memory accesses into streams that
 should, in general contain the same type of data. Figure
 \ref{fig:tappoint} shows the effect of choosing various definitions of a
 tap point when looking for the place where the browser writes the URL
-entered by the user (``google.com'').  At the coarsest granularity (a),
+entered by the user (``google.com''). At the coarsest granularity (a),
 one can simply look at all writes from the CPU to RAM; however, the
 desired information is buried among reams of irrelevant data.
 Separating out tap points by program and program counter (b) is better,
@@ -70,12 +71,11 @@ just the desired information.
 Collecting information about the caller is accomplished in TZB in an
 architecture-neutral way. Because stack walking is, in general,
 unreliable (even on x86, any programs that use frame pointer omission
-will cause stack walking to fail), we run a plugin that maintains a
-shadow stack based on function calls and returns, which allows us to
+will cause stack walking to fail), we run a plugin (described in
+Section~\ref{sec:implementation:subsec:callstack}) that maintains a
+shadow stack based on function calls and returns. This allows us to
 generically obtain an accurate call stack at all times, at the cost of
-of a slight slowdown in replay performance. We describe our 
-callstack plugin in more detail in
-Section~\ref{sec:implementation:subsec:callstack}.
+of a slight slowdown in replay performance.
 
 Although it is possible that some tap points may require deeper
 information about the calling context (for example, if an application
@@ -195,6 +195,8 @@ form of \emph{data triage}.
 Our clustering is based on the venerable $k$-means
 algorithm~\cite{Steinhaus:1956kx}, but using the Jensen-Shannon
 divergence described in the previous section. As in the statistical
-search case, we use bigram statistics for our feature vectors. We
-evaluate the performance of this clustering compared to an expert
+search case, we use bigram statistics for our feature vectors.
+Initialization uses the KMeans++ algorithm~\cite{Arthur:2007ve}, which
+helps guarantee that the initial cluster centers are widely separated.
+We evaluate the performance of this clustering compared to an expert
 labeling in Section~\ref{sec:eval:subsec:cluster}.
