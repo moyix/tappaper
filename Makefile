@@ -1,7 +1,7 @@
 # Set this to one or more main LaTeX files (e.g. those with \documentclass) 
 # for a specific build. Leave blank to build all files having an uncommented
 # \documentclass.
-MAIN=	
+MAIN=paper.tex
 
 
 ###########################################################################

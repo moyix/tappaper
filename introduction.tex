@@ -29,13 +29,12 @@ desktop clients, and system and application log messages. Second,
 they require that the desired information be accessible through some
 public interface (a public API in the case of Virtuoso, and a userland
 program or kernel module in the case of VMST). This means that some
-security-relevant information, such as \fixme{example}, may be
-inaccessible to such tools. Finally, Payne et al.~\cite{payne:2008}
-argue that many security applications need some form of \emph{active
-monitoring}; that is, they need to be notified when certain system
-events occur. Current solutions to the introspection problem provide no
-way of locating places in the system where it would be useful to
-interpose.
+security-relevant information may be inaccessible to such tools.
+Finally, Payne et al.~\cite{payne:2008} argue that many security
+applications need some form of \emph{active monitoring}; that is, they
+need to be notified when certain system events occur. Current solutions
+to the introspection problem provide no way of locating places in the
+system where it would be useful to interpose.
 
 In this paper, we attempt to address the limitations of past solutions
 by examining a rich source of information about system and application
@@ -70,18 +69,23 @@ add \emph{record and replay} to QEMU, which allows executions to be
 recorded with low overhead. Our heavyweight analyses are then run on
 the replayed execution to analyze every memory access made
 \emph{without} perturbing the system under inspection. We describe our
-system, Tappan Zee Bridge (TZB), in detail in
-Section~\ref{sec:implementation}.
+system, Tappan Zee Bridge (TZB),\footnote{So named because the
+northbridge on Intel architectures traditionally carried data between
+the CPU and RAM.} in detail in Section~\ref{sec:implementation}.
 
 Finally, previous systems have required a significant amount of effort
 to support new architectures. This problem has become more pressing in
 recent years, as ARM-based devices such as smartphones have exploded in
 popularity. Because TZB looks at memory accesses, rather than inspecting
 binary code, it naturally supports a wide variety of architectures with
-minimal effort. To demonstrate this, our evaluation includes the MIPS
-and ARM architectures in addition to x86.
+minimal effort. To demonstrate this, our evaluation includes the and ARM
+architecture in addition to x86, and the techniques we describe easily
+generalize to other architectures.
 
 The remainder of this paper is structured as follows.
+Section~\ref{sec:tapdef} defines precisely how we define a tap point. We
+then explore that definition and its impact on the scope of our work and
+the assumptions it rests on in Section~\ref{sec:scope}.
 Section~\ref{sec:technical} describes techniques for finding tap points
 of interest. We then discuss our system, Tappan Zee Bridge, which
 implements these techniques, in Section~\ref{sec:implementation}. We
