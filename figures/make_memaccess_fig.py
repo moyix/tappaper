@@ -16,12 +16,16 @@ ylabel(u'Memory Address →')
 
 # memcpy
 text(11.3,.5,"memcpy")
-memcpy_x1 = arange(4,8)+1
-memcpy_y1 = arange(3,7)+1
+memcpy_x1 = arange(5,9)
+memcpy_y1 = arange(4,8)
 circles = plot(memcpy_x1,memcpy_y1,'bo')
-memcpy_x2 = arange(8,10)+1
-memcpy_y2 = arange(7,9)+1
+memcpy_x2 = arange(9,11)
+memcpy_y2 = arange(8,10)
 triangles = plot(memcpy_x2,memcpy_y2,'r^')
+for x,y,c,k in zip(concatenate([memcpy_x1,memcpy_x2])-.25,
+                   concatenate([memcpy_y1,memcpy_y2])+1,
+                   "google", "bbbbrr"):
+    text(x,y,c,color=k)
 
 # dmesg
 text(27,13,"dmesg")
@@ -32,17 +36,29 @@ text(22,18.5,"[...]")
 dmesg_x2 = arange(25,29)
 dmesg_y2 = arange(19,23)
 plot(dmesg_x2,dmesg_y2,'r^')
+for x,y,c,k in zip(concatenate([dmesg_x1,dmesg_x2])-.25,
+                   concatenate([dmesg_y1,dmesg_y2])+1,
+                   "doneInit", "bbbbrrrr"):
+    text(x,y,c,color=k)
 
 # memmove
 text(10.5,13,"memmove")
 memmove_x = arange(4,12)
 memmove_y = concatenate([arange(19,23),arange(15,19)])
 plot(memmove_x,memmove_y,'bo')
+for x,y,c,k in zip(memmove_x-.25,
+                   memmove_y+1,
+                   "le.cgoog", "bbbbbbbb"):
+    text(x,y,c,color=k)
 
 # Serial port
 text(27.5,.5,"serial")
 serial_x = arange(18,28)
-plot(serial_x,repeat([6], len(serial_x)), 'bo')
+serial_y = repeat([6], len(serial_x))
+plot(serial_x,serial_y, 'bo')
+for x,y,c,k in zip(serial_x-.25, serial_y+1,
+                   "Uncompress", "bbbbbbbbbb"):
+    text(x,y,c,color=k)
 
 # Dividing lines
 plot([0,XMAX],[YMAX/2,YMAX/2],'k--')

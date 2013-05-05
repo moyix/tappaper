@@ -89,13 +89,13 @@ for sophisiticated cross-platform analyses in future work.
 \subsection{Callstack Monitoring}
 \label{sec:implementation:subsec:callstack}
 
-As explained in Section~\ref{sec:technical:subsec:tapdef}, tap points
-need information about the calling context. Keeping track of this
-information requires some knowledge about the CPU architecture on which
-the OS is running, and so we decided to encapsulate this task into a
-single plugin. TZB's other analyses can then query the current call
-stack to arbitrary depth by invoking \texttt{get\_callers} and not worry
-about the details described in this section.
+As explained in Section~\ref{sec:tapdef}, tap points need information
+about the calling context. Keeping track of this information requires
+some knowledge about the CPU architecture on which the OS is running,
+and so we decided to encapsulate this task into a single plugin. TZB's
+other analyses can then query the current call stack to arbitrary depth
+by invoking \texttt{get\_callers} and not worry about the details
+described in this section.
 
 To track call stack information, the \texttt{callstack} plugin examines
 each basic block as it is translated, looking for an
