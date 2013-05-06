@@ -115,7 +115,7 @@ data. The results can be seen in Table~\ref{tbl:url}.
         \hline
         Client & Caller & PC & Process \\
         \hline
-        Deb OpenSSL (arm) & tls1\_generate\_master\_secret+0x9c & \texttt{tls1\_PRF+0x90} & openssl \\
+        Deb OpenSSL (arm) & \texttt{tls1\_generate\_master\_secret+0x9c} & \texttt{tls1\_PRF+0x90} & openssl \\
         Deb OpenSSL (amd64) & \texttt{ssl3\_send\_client\_key\_exchange+0x437} & \texttt{tls1\_generate\_master\_secret+0x108} & openssl \\
         Deb Epiphany (arm) & \texttt{md\_write+0x74} & \texttt{md5\_write+0x68} & epiphany \\ 
         Deb Epiphany (amd64) & \texttt{md\_write+0x60} & \texttt{md5\_write+0x49} & epiphany \\ 
