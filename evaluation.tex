@@ -19,24 +19,24 @@ work.
 \subsection{File Access}
 \label{sec:eval:subsec:file}
 
-\begin{table}[t!]
+\begin{table*}
     \centering
-    \begin{tabular}{|l|l|l|}
+    \begin{tabular}{|l|l|l|l|}
         \hline
-        Target & Tap & ASCII? \\
+        Target & Caller & PC & ASCII? \\
         \hline
-        Debian (amd64) & foo & foo \\ 
-        Debian (arm) & foo & foo \\
-        Windows 7 (x86) & foo & foo \\
-        Haiku (x86) & foo & foo \\
-        FreeBSD (x86) & foo & foo \\
+        Debian (amd64) & \texttt{getname+0x13e} & \texttt{strncpy\_from\_user+0x52} & Yes \\ 
+        Debian (arm) & \texttt{getname+0x88} & \texttt{\_\_strncpy\_from\_user+0x10} & Yes \\
+        Haiku (x86) & \texttt{EntryCache::Lookup+0x27} & \texttt{hash\_hash\_string+0x1b} & Yes \\
+        FreeBSD (x86) & \texttt{namei+0xd1} & \texttt{copyinstr+0x38} & Yes \\
+        Windows 7 (x86) & \fixme{} & \fixme{} & No \\
         \hline
     \end{tabular}
 \caption{Tap points found for file access on different operating
 systems. The ``ASCII'' column indicates whether the data was written in
 ASCII or UTF-16.}
 \label{tbl:file}
-\end{table}
+\end{table*}
 
 Monitoring file accesses is a requirement for many host-based security
 applications, including on-access anti-virus scanners. Thus, locating a

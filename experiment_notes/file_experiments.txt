@@ -1,0 +1,111 @@
+filetest (Win 7 x86) Unicode
+
+Note: could be potential problems here. I see lots of NtOpenFile and no
+NtCreateFile? Word on the street is that NtOpenFile is mostly used by
+DOS programs? 
+
+0x8283bb3a ntkrpamp!NtOpenFile+0x2a                         136
+0x828359b4 ntkrpamp!IopCreateFile+0x676                     814
+0x8283ee0c ntkrpamp!ObOpenObjectByName+0x9b                 3255
+0x8282fc84 ntkrpamp!ObpCaptureObjectCreateInformation+0x15c 3274
+0x8282fdc5 ntkrpamp!ObpCaptureObjectName+0xcb               3311
+0x826417f3 ntkrpamp!memcpy+0x33                             
+
+                                                            96
+0x8283bb3a ntkrpamp!NtOpenFile+0x2a                         99
+0x828359b4 ntkrpamp!IopCreateFile+0x676                     444
+0x8283eed6 ntkrpamp!ObOpenObjectByName+0x165                542
+0x8282eac5 ntkrpamp!ObpLookupObjectName+0x4fa               543
+0x8284f04b ntkrpamp!IopParseDevice+0xc79                    841
+0x826b04af ntkrpamp!RtlCopyUnicodeString+0x32               1149
+0x826417f3 ntkrpamp!memcpy+0x33
+
+0x8283bb3a ntkrpamp!NtOpenFile+0x2a                         198
+0x828359b4 ntkrpamp!IopCreateFile+0x676                     288
+0x8283eed6 ntkrpamp!ObOpenObjectByName+0x165                484
+0x8282eac5 ntkrpamp!ObpLookupObjectName+0x4fa               486
+0x8284f2a9 ntkrpamp!IopParseDevice+0xed7
+0x8263f593 ntkrpamp!IofCallDriver+0x64
+0x869a58b7 fltmgr!FltpCreate+0x2c9
+0x869a51fe fltmgr!FltpCreateInternal+0x24
+0x869919f0 fltmgr!FltpPassThroughInternal+0x40
+0x8698eaeb fltmgr!FltpPerformPreCallbacks+0x34d             1082
+0x869c6ffd fileinfo!FIPreCreateCallback+0x179               1082
+0x826417f3 ntkrpamp!memcpy+0x33
+
+0x77c56a04 unknown
+0x736427e4 unknown
+0x73642b79 unknown
+0x73642a58 unknown
+0x73642988 unknown
+0x77c56134 unknown
+0x826461ea ntkrpamp!KiFastCallEntry+0x12a       2
+0x8280b0f2 ntkrpamp!NtQueryObject+0x21c         2
+0x82856d88 ntkrpamp!ObpQueryNameString+0x7f     74
+0x82879662 ntkrpamp!IopQueryName+0x1b           74
+0x8284bebe ntkrpamp!IopQueryNameInternal+0x2bc  74
+0x82641876 ntkrpamp!memcpy+0xb6                 74
+
+0x8263f593 ntkrpamp!IofCallDriver+0x64
+0x869a58c9 fltmgr!FltpCreate+0x2db
+0x8699229c fltmgr!FltpLegacyProcessingAfterPreCallbacksCompleted+0x33a
+0x86991b46 fltmgr!FltpPassThroughCompletion+0x98
+0x86991512 fltmgr!FltpProcessIoCompletion+0x10
+0x8698e324 fltmgr!FltpPerformPostCallbacks+0x24a
+0x869c7edd fileinfo!FIPostCreateCallback+0x171
+0x869c7cc3 fileinfo!FIStreamGetInfo+0x145
+0x869c5e48 fileinfo!FIStreamSetFileInfo+0xda
+0x869c5bc3 fileinfo!FIStreamLog+0x6f
+0x826b0233 ntkrpamp!PfFileInfoNotify+0x4fe                              18478
+0x82887bc3 ntkrpamp!PfpRpFileKeyUpdate+0xea                             18478
+0x8286e18c ntkrpamp!RtlUpcaseUnicodeChar+0x5
+
+0x8263f593 ntkrpamp!IofCallDriver+0x64                                  298
+0x869a58c9 fltmgr!FltpCreate+0x2db                                      298
+0x8699229c fltmgr!FltpLegacyProcessingAfterPreCallbacksCompleted+0x33a  298
+0x86991b46 fltmgr!FltpPassThroughCompletion+0x98                        298
+0x86991512 fltmgr!FltpProcessIoCompletion+0x10                          298
+0x8698e324 fltmgr!FltpPerformPostCallbacks+0x24a                        298
+0x869c7edd fileinfo!FIPostCreateCallback+0x171                          298
+0x869c7cc3 fileinfo!FIStreamGetInfo+0x145                               298
+0x869c5e48 fileinfo!FIStreamSetFileInfo+0xda                            298
+0x869c5bc3 fileinfo!FIStreamLog+0x6f                                    298
+0x826b0233 ntkrpamp!PfFileInfoNotify+0x4fe                              298
+0x82887bba ntkrpamp!PfpRpFileKeyUpdate+0xe1
+
+deb-squeeze-filetest (amd64)
+
+ffffffff81010b42 (system_call_fastpath+0x16)
+ffffffff810ece77 (do_sys_open+0x1d)
+ffffffff810f8f8d (getname+0x13e)
+ffffffff811959dd (strncpy_from_user+0x52)
+
+freebsd-filetest (x86)
+
+00000000c0d32af1(Xint0x80_syscall+0x21)
+00000000c0d49315(syscall+0x355)
+00000000c0ab02b0(sys_open+0x30)
+00000000c0ab0275(kern_open+0x35)
+00000000c0aafe4c(kern_openat+0x1ec)
+00000000c0ab89db(vn_open+0x3b)
+00000000c0ab83c6(vn_open_cred+0x96)
+00000000c0a9e0a1(namei+0xd1)
+00000000c0d46ee8(copyinstr+0x38)
+0000000000000000
+
+squeeze-arm-filetest (arm)
+
+c00ca480(do_sys_open+0x1c)
+c00d6344(getname+0x88)
+c016c970(__strncpy_from_user+0x10)
+
+haiku-filetest (x86)
+
+00000000801114ba(x86_sysenter+0x2e)
+00000000801113a2(pre_syscall_debug_done+0x2)
+00000000800cc870(_user_open+0xbc)
+00000000800c6aee(file_create(int, char *, int, int, bool)+0x5a)
+00000000800c6480(create_vnode(vnode *, char const *, int, int, bool)+0x3c)
+00000000800c113a(lookup_dir_entry(vnode *, char const *, vnode **)+0x2e)
+00000000800b203f(EntryCache::Lookup(long long, char const *, long long &)+0x27)
+00000000800e6c87(hash_hash_string+0x1b)

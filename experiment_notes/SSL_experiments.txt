@@ -55,6 +55,7 @@ Process: openssl
 0x00007ffff7bb6998 tls1_generate_master_secret+0x1d8
 
 Epiphany 2.30.6
+8 callers required to make it unique
 
 00007ffff079baa7 gnutls_handshake+0x37
 00007ffff079a475 _gnutls_handshake_common+0x35
@@ -78,6 +79,7 @@ Process: openssl
 4005e5f8 tls1_PRF+0x90
 
 Epiphany 2.30.6
+7 callers required to make it unique
 
 41c7abb0 gnutls_handshake+0x44
 41c790ec _gnutls_handshake_common+0x48
