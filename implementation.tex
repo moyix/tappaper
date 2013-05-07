@@ -27,7 +27,7 @@ enough to be able to boot and run modern operating systems such as
 Windows 7 (earlier versions of QEMU such as 0.9.1 cannot).
 
 There are three main aspects to PANDA that make it very convenient for
-building dynamic analyses such as TZB. None are earth-shattering in
+building dynamic analyses. None are earth-shattering in
 their novelty, but they compose to form a unique and particularly useful
 system that deserves description (a more detailed technical report on
 PANDA is forthcoming). First, PANDA provides a plug-in architecture that
@@ -65,26 +65,10 @@ would make the system unusably slow.
 
 The final aspect of PANDA worth mentioning is its integration of LLVM.
 QEMU lowers basic blocks of guest code to its own IL, which PANDA can,
-additionally, re-render as basic blocks of LLVM code\footnote{We use a
-module extracted from S2E~\cite{Chipounov:2011s2e} to lower QEMU's IL to
-LLVM.}. This effectively allows us to write instruction-level PANDA
-models or analyses without any knowledge of semantic details of any of
-the 14 ISAs QEMU supports. We need only model the small number (about
-50) of LLVM instructions correctly. This means, for instance, that the
-dynamic taint analysis we have built for PANDA is architecture-neutral;
-it can trace taint for ARM and PPC binaries as readily as it can for
-x86. Actually, there is slightly more to PANDA's LLVM integration.
-Much of the more complicated and esoteric aspects of processor emulation
-are handled by QEMU via C helper functions. Floating point, SIMD, flag
-calculations, to name just a few such aspects, are all emulated via C
-functions in QEMU. Most dynamic analyses system built atop QEMU either
-model these high-level instructions explicitly, or suffer gaps in
-analysis. We chose to include helpers in our analysis, and we do so
-without manual effort by compiling their C functions with LLVM, and,
-thus making them available to the same kind of analysis we perform on
-basic blocks of emulated code~\cite{Whelan:2013architecture}. Although
-LLVM translation is not currently used by TZB, we anticipate using it
-for sophisiticated cross-platform analyses in future work.
+additionally, re-render as basic blocks of LLVM coden via a module 
+extracted from S2E. We will not discuss this capability any further 
+here as it is not used by TZB.
+
 
 \subsection{Callstack Monitoring}
 \label{sec:implementation:subsec:callstack}
