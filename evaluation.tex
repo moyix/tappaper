@@ -16,53 +16,6 @@ these will be more meaningful to the reader than the raw addresses, but
 we emphasize that debug information is in no way required for TZB to
 work.
 
-\subsection{File Access}
-\label{sec:eval:subsec:file}
-
-\begin{table*}
-    \centering
-    \small
-    \begin{tabular}{|l|l|l|l|}
-        \hline
-        Target & Caller & PC & ASCII? \\
-        \hline
-        Debian (amd64) & \texttt{getname+0x13e} & \texttt{strncpy\_from\_user+0x52} & Yes \\ 
-        Debian (arm) & \texttt{getname+0x88} & \texttt{\_\_strncpy\_from\_user+0x10} & Yes \\
-        Haiku (x86) & \texttt{EntryCache::Lookup+0x27} & \texttt{hash\_hash\_string+0x1b} & Yes \\
-        FreeBSD (x86) & \texttt{namei+0xd1} & \texttt{copyinstr+0x38} & Yes \\
-        Windows 7 (x86) & \fixme{} & \fixme{} & No \\
-        \hline
-    \end{tabular}
-\caption{Tap points found for file access on different operating
-systems. The ``ASCII'' column indicates whether the data was written in
-ASCII or UTF-16.}
-\label{tbl:file}
-\end{table*}
-
-Monitoring file accesses is a requirement for many host-based security
-applications, including on-access anti-virus scanners. Thus, locating a
-tap point at which systemwide file accesses can be observed is of
-considerable importance. However, because previous approaches to the
-introspection problem~\cite{Dolan-Gavitt:2011uq,Fu:2012fk} are limited
-to polling the target for information, they cannot be used in this
-scenario.
-
-To find such a tap point, we designed a training run that created and
-accessed 100 files, each named after ten successive digits of $\pi$. The
-introspection targets chosen for this test were: Debian squeeze (amd64),
-Debian squeeze (armel), Windows 7 SP1 32-bit, FreeBSD 9.0, and Haiku R1
-Alpha 3. We then searched for tap points that wrote strings matching the
-ASCII and UTF-16 encodings of the filenames using the
-\texttt{stringsearch} analysis plugin. The UTF-16 encodings were
-included because it was known that Windows 7 uses UTF-16 for strings
-pervasively, allowing us to surmise that filenames would likely be
-UTF-16 encoded. Finally, to validate the tap points found, we looked at
-all data written by the tap point to ensure that it contained all of the
-filenames accessed, and that no other data was mixed in.
-
-The results are shown in Table~\ref{tbl:file}. \fixme{Add commentary
-here when the results are in.}
-
 \subsection{URL Access}
 \label{sec:eval:subsec:url}
 
@@ -73,13 +26,13 @@ here when the results are in.}
         \hline
         Browser & Caller & PC \\
         \hline
-        Deb Epiphany (arm) & \texttt{0x411de294} & \texttt{0x41aca974} \\
+        Deb Epiphany (arm) & \texttt{} & \texttt{} \\
         Deb Epiphany (amd64) & \texttt{webkit\_frame\_load\_uri+0xc3} & \texttt{WebCore::KURL::init+0x368} \\ 
         Win7 IE8 (x86) & \texttt{ieframe!CAddressEditBox::\_Execute+0xaa} & \texttt{ieframe!StringCchCopyW+0x50} \\
         Win7 Firefox (x86) & \texttt{xul!nsAutoString::nsAutoString+0x1a} & \texttt{xul!nsAString\_internal::Assign+0x1d} \\
         Win7 Chrome (x86) &  \texttt{msftedit!CTxtEdit::OnTxChar+0x105} & \texttt{msftedit!CTxtSelection::PutChar+0xb8} \\
-        Win7 Opera (x86) &  \texttt{0x6b0ff6c6} & \texttt{0x6af72783} \\
-        Haiku WebPositive (x86) & \fixme{} & \fixme{} \\
+        Win7 Opera (x86) &  \texttt{Opera.dll+0x2cf6c6} & \texttt{Opera.dll+0x142783} \\
+        Haiku WebPositive (x86) & \texttt{BWebPage::LoadURL+0x3a} & \texttt{BMessage::AddString+0x26} \\
         \hline
     \end{tabular}
 \caption{Tap points found that write the URL typed into the browser by
@@ -179,7 +132,7 @@ potential downside of using tap points for introspection: it is not
 always clear in advance how many levels of call stack information will
 be required.
 
-We were succesful in locating tap points for all SSL/TLS clients tested.
+We were successful in locating tap points for all SSL/TLS clients tested.
 We note that uncovering similar information using traditional techniques
 would have required significant expertise and reverse engineering of
 both open source and proprietary software.
@@ -219,6 +172,61 @@ mechanism to make SSL connections. The key found was able to decrypt the
 connections contained in the packet dump.\footnote{The malware also has
 a second layer of encryption, which custom and not based on SSL; we did
 not attempt to decrypt this second layer.}
+
+\subsection{File Access}
+\label{sec:eval:subsec:file}
+
+\begin{table*}
+    \centering
+    \small
+    \begin{tabular}{|l|l|l|}
+        \hline
+        Target & Caller & PC & ASCII? \\
+        \hline
+        Debian (amd64) & \texttt{getname+0x13e} & \texttt{strncpy\_from\_user+0x52} \\ 
+        Debian (arm) & \texttt{getname+0x88} & \texttt{\_\_strncpy\_from\_user+0x10} \\
+        Haiku (x86) & \texttt{EntryCache::Lookup+0x27} & \texttt{hash\_hash\_string+0x1b} \\
+        FreeBSD (x86) & \texttt{namei+0xd1} & \texttt{copyinstr+0x38} \\
+        Windows 7 (x86) & \texttt{ObpCaptureObjectName+0xcb} & \texttt{memcpy+0x33} \\
+        \hline
+    \end{tabular}
+\caption{Tap points found for file access on different operating systems.}
+\label{tbl:file}
+\end{table*}
+
+Monitoring file accesses is a requirement for many host-based security
+applications, including on-access anti-virus scanners. Thus, locating a
+tap point at which systemwide file accesses can be observed is of
+considerable importance. However, because previous approaches to the
+introspection problem~\cite{Dolan-Gavitt:2011uq,Fu:2012fk} passively
+retrieve information from the guest and are not event-driven, they
+cannot be used in this scenario.
+
+To find such a tap point, we created recordings in which we opened files
+in various operating systems. Specifically, in each OS we created 100
+files, each named after ten successive digits of $\pi$. The operating
+systems chosen for this test were: Debian squeeze (amd64), Debian
+squeeze (armel), Windows 7 SP1 32-bit, FreeBSD 9.0, and Haiku R1 Alpha
+3 (all on x86). We then searched for tap points that wrote strings
+matching the ASCII and UTF-16 encodings of the filenames using the
+\texttt{stringsearch} analysis plugin. The UTF-16 encodings were
+included because it was known that Windows 7 uses UTF-16 for strings
+pervasively, allowing us to surmise that filenames would likely be
+UTF-16 encoded. Finally, we looked at the tap points found by
+\texttt{stringsearch}, and validated them by hand.
+
+The results are shown in Table~\ref{tbl:file}. For most of the operating
+systems we had no difficulty finding a tap point that contained the name
+of each file as it was accessed. The one exception was Windows 7, where
+the most promising tap point not only wrote file results, but also a
+number of unrelated objects such as registry key names. As in the SSL
+case, the root cause of this was insufficient calling context: in
+Windows several different things fall under the umbrella of a ``named
+object'', and these were all being captured at this tap point. We found
+that four levels of calling context were sufficient to restrict the tap
+point to just file accesses; the ``deepest'' caller was
+\texttt{IopCreateFile} (which, despite its name, is used for both
+opening existing files and creating new ones).
 
 \subsection{Finding \large \texttt{dmesg}}
 \label{sec:eval:subsec:dmesg}
