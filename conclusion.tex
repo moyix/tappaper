@@ -1,20 +1,15 @@
 \section{Conclusion}
 \label{sec:conclusion}
 
-In this paper we have presented TZB, a system that automatically locates 
+In this paper we have presented TZB, a system that automatically locates
 candidate memory accesses for active monitoring of applications or operating
-systems.  
-This is a task that previously required extensive reverse engineering by domain
-experts.  
-We have successfully used TZB to identify a broad range of tap points, including 
-ones to dynamically extract SSL keys, URLs typed into browsers, and the names of 
-files being opened.
-TZB is built atop the Qemu-based PANDA platform as a set of plug-ins and its 
-operation is operating system and architecture agnostic, affording it impressive 
-scope for application.
-This is a powerful technique that has already transformed how the authors 
-perform RE tasks.
-By reframing a diffult RE task as a principled search through streaming data 
-provided by dynamic analysis, TZB allows manual effort to be refocused on 
+systems. This is a task that previously required extensive reverse engineering
+by domain experts. We have successfully used TZB to identify a broad range of
+tap points, including ones to dynamically extract SSL keys, URLs typed into
+browsers, and the names of files being opened. TZB is built atop the QEMU-based
+PANDA platform as a set of plug-ins and its operation is operating system and
+architecture agnostic, affording it impressive scope for application. This is a
+powerful technique that has already transformed how the authors perform RE
+tasks. By reframing a diffult RE task as a principled search through streaming
+data provided by dynamic analysis, TZB allows manual effort to be refocused on
 more critical and less automatable tasks like validation.
-
