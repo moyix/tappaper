@@ -336,10 +336,6 @@ we created two recordings: running applications (\texttt{cmd.exe},
 sitting idle.\footnote{Although we would have preferred to include
 Windows boot and shutdown recordings, at the time our replay system had
 a bug (now fixed) that prevented these recordings from being replayed.}
-Table~\ref{tbl:clusttaps} shows the number of tap points found in each
-of the recordings; we can see that the FreeBSD system is overall much
-less active than the Windows 7 system during the time periods we
-recorded.
 
 Next, we sampled a subset of the tap points found in each recording.
 Given that the vast majority of tap points do not write interesting
@@ -358,7 +354,7 @@ the data from each of the sampled tap points, blinded them by assigning
 each a unique id, and then provided the data files to our two labelers.
 Each labeler independently assigned labels to each of the samples using
 the labels described in Table~\ref{tbl:clustlabels}, and the two
-labelers then worked together to reconcile their labels.
+labelers then worked together to reconcile their labels.  
 
 Finally, we ran a $k$-means clustering with $k = 10$; $10$ was chosen
 because it was a round number reasonably close the number of labels our
@@ -367,30 +363,34 @@ Index~\cite{Hubert:1985zr} to score the quality of our clustering
 relative to our hand-labeled examples. The Adjusted Rand Index for a
 clustering ranges from -1 to 1; clusterings which are independent of the
 hand labeling will receive a score that is negative or close to zero. As
-can be seen in Table~\ref{tbl:clustqual}, our clustering was generally
-of poor quality and did not match up very well on the hand-labeled
-samples.
+can be seen in Table~\ref{tbl:clustqual}, our clustering did not match 
+up very well on the hand-labeled samples.  Note, however, that labeling
+criteria are selected without knowledge of the sizes of categories or
+whether or not the distance metric will effectively discriminate, so it
+is perhaps hardly surprising that the correspondence is poor.  
 
-Based on these results, we conclude that at present, clustering does not
-appear to work very well for our purposes. There is some hope, however.
-In an effort to understand why our clustering performed so poorly, we
-created a confusion matrix for the Win7 Apps recording, which can be
-seen in Figure~\ref{fig:win7apps}. The values along the diagonal
-represent the fraction of taps that were correctly assigned to the
-same cluster when a human had assigned them to the same cluster. The
-remaining cells represent the fraction of taps correctly assigned to
-different clusters when a human had assigned them different labels. The
-magenta cells indicate that we did not have enough examples to make a
-comparison. In short: light cells mean the clustering performed well on
-that pair of labels, dark cells mean it performed poorly. From this we
-can see that for many of the labels of human interest (i.e., those which
-are primarily text-based) the clustering performed reasonably well,
-but it performed poorly on tap points that contained binary data. This
-helps explain its poor overall performance, since the vast
-majority---90.8\%---of the samples in our labeling were not text-based.
-In future work we hope to carry out further experiments to determine
-whether the clusters found are useful in reducing the amount of data a
-human reverse engineer would have to look through.
+There is some hope, however.  
+Regardless of the apparently poor clustering performance with respect to 
+hand-labeling, we decided to determine if the clusters contained new and 
+interesting data and if finding that data would be facilitated by them.  
+First, we determined to which of the 100 clusters data from the dmesg 
+and filename tap points was assigned.  
+We were heartened to learn that all of these two text-like tap points 
+had been sent to the same cluster.
+We proceeded to explore this cluster of approximately 5000 tap points, 
+and found that, indeed, the vast majority of the tap points contained 
+readable text of some sort.  
+Further, in the course of about thirty minutes of spelunking around this
+cluster, not only kernel messages and filenames, but, additionally, a 
+stone soup of shell scripts, process listings kernel configuration, 
+graphviz files, and so on made an appearance.  
+A selection of these tap point contents is provided in 
+Appendix~\ref{app:tap-point-contents}.
+We did not exhaustively examine this cluster, but plan to do so soon,
+as it appears to contain much of interst for active monitoring.
+If clustering has focused us on one out of 100 clusters, this is 
+potentially a big savings.  
+
 
 \begin{table}
     \centering
@@ -418,25 +418,6 @@ human reverse engineer would have to look through.
 \caption{Labels given to the sampled tap points by human evaluators,
 along with the number of times each occurred.}
 \label{tbl:clustlabels}
-\end{table}
-
-\begin{table}
-    \centering
-    \small
-    \begin{tabular}{|l|r|}
-        \hline
-        Recording & Tap Points \\
-        \hline
-        Win7 Apps        & 1293429 \\
-        Win7 Idle        & 520032 \\
-        FreeBSD Boot     & 507900 \\
-        FreeBSD Shutdown & 152899 \\
-        FreeBSD Apps     & 60573 \\
-        FreeBSD Idle     & 15569 \\
-        \hline
-    \end{tabular}
-\caption{Number of tap points in each recording.}
-\label{tbl:clusttaps}
 \end{table}
 
 \begin{table}
