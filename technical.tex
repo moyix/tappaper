@@ -56,26 +56,38 @@ points.
 
 A second tap point application involves finding tap points for things
 about which we have limited knowledge.
-
 We can easily assemble corpora of exemplars to represent a semantic
 class: English prose, kernel messages, or mail headers. These examples
 need not come from tap points but can easily be collected directly from
 interacting with the operating system itself. From such a corpus, we can
-readily build a statistical model of the semantic class. Tap points
-whose contents have high likelihood ratios for the semantic model with
-respect to a null model are likely to come from the same semantic class
-as the corpus. This kind of supervised learning permits us, for
-instance, to train a model on examples of the contents of \texttt{dmesg}
-under Linux and employ it to locate tap points that write analogous data
-in other operating systems such as FreeBSD, Minix, and Haiku.
+readily build a statistical model, with which we can build a distance
+measure for scoring and ranking tap points by who close their contents
+are to the model.
 
-In addition to statistical comparison to a known exemplar, we can also
-search for data of unknown format if we have access to some external
-validator. This is the case, for example, when searching for tap points
-that write encryption keys: although the exact key may not be known in
-advance (ruling out the use of string matching), if we have bit of
-encrypted data we can check whether a given byte string is a valid
+
+
+% Tap points 
+%whose contents have high likelihood ratios for the semantic model with
+%respect to a null model are likely to come from the same semantic class
+%as the corpus. This kind of supervised learning permits us, for
+%instance, to train a model on examples of the contents of \texttt{dmesg}
+%under Linux and employ it to locate tap points that write analogous data
+%in other operating systems such as FreeBSD, Minix, and Haiku.
+
+In addition to such statistical methods, we can also
+search using an oracle.  
+%for data of unknown format if we have access to some external
+%validator. 
+This is the case, for example, with tap points
+that write encryption keys.
+Although the exact key may not be known in
+advance, we can check whether a given byte string is a valid
 decryption key by trying to decrypt our sample data.
+
+
+%(ruling out the use of string matching), if we have bit of
+%encrypted data we can check whether a given byte string is a valid
+%decryption key by trying to decrypt our sample data.
 
 \subsection{Unknown Unknowns}
 
