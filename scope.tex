@@ -2,7 +2,20 @@
 \label{sec:scope}
 
 The goal of Tappan Zee Bridge is to find points at which to interpose
-for active introspection. This goal led us to define the notion of a tap
+for active introspection. More precisely, our goal is to speed the 
+current entirely manual process by which applications or operating
+systems are reverse engineereed in order to locate tap points for
+active monitoring. It should be noted that we do not aim to surpass 
+those manual efforts. We have no automatic way, for instance, of 
+knowing for certain if a tap point will fail to output crucial data 
+or, alternately, spew out superflous information under some future 
+conditions. This is a separate problem to which we see no ready 
+solution. Static analysis of candidate tap points or extensive
+testing are good stop-gaps, but nothing short of fully understanding
+enormous binary codebases can really give complete assurance that 
+a tap point wont miss or false alarm in the future. 
+
+This goal led us to define the notion of a tap
 point, the context from which a memory access occurs. In this section,
 we explore how our definition of a tap point and our focus on active
 introspection shape the scope of our work.
