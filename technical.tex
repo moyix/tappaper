@@ -1,4 +1,4 @@
-\section{Technical Description}
+\section{Search Strategies}
 \label{sec:technical}
 
 To find useful \emph{tap points} in a system---places from which to
@@ -11,23 +11,22 @@ application inside of TZB, which can capture and record all sources of
 non-determinism with low overhead, allowing for later deterministic
 replay. Next, one can run one or more analyses that seek out the desired
 information among all memory accesses seen during the execution.
-Analyses in TZB take the form of plugins that are called on each memory
-access made during a replayed execution and, at the end, write out a
-report on the tap points analyzed. Finally, the tap points found should
-be validated to ensure that they do, in fact, provide the desired
+Analyses in TZB take the form of PANDA plugins that are called on each
+memory access made during a replayed execution and, at the end, write
+out a report on the tap points analyzed. Finally, the tap points found
+should be validated to ensure that they do, in fact, provide the desired
 information. Such assurance can be gained either by examining the data
 in the tap point in new executions, or by examining the code around the
 tap point. This workflow is illustrated in Figure~\ref{fig:workflow}.
 
-In this section, we give a technical description of Tappan Zee Bridge.
-We describe three different ways of finding tap points according to a
-standard epistemic classification scheme~\cite{Rumsfeld:2002}: searching
-for ``known knowns''---tap points where the desired data and its format
-is known; searching for ``known unknowns''---tap points where the kind
-of data sought is known, but its precise format is not; and finally
-``unknown unknowns''---tap points where the type and format of the data
-sought are not known, and we are instead simply trying to find
-``interesting'' tap points.
+In this section, we describe three different ways of finding tap points
+grouped according to a standard epistemic classification
+scheme~\cite{Rumsfeld:2002}: searching for ``known knowns''---tap points
+where the desired data and its format is known; searching for ``known
+unknowns''---tap points where the kind of data sought is known, but its
+precise format is not; and finally ``unknown unknowns''---tap points
+where the type and format of the data sought are not known, and we are
+instead simply trying to find ``interesting'' tap points.
 
 \subsection{Known Knowns}
 
@@ -38,16 +37,11 @@ the hypervisor whenever a URL is entered in a browser, one can visit a
 known sequence of URLs, and then monitor all tap points, searching for
 specific byte sequences that make up those URLs. The same holds for
 other data whose representation when written to memory is predictable:
-filenames, window titles, registry key names, and so on.
-
-To realize this in TZB, we developed a plugin (\texttt{stringsearch})
-that can quickly search for byte strings read or written by tap points
-during a recorded execution. This can be accomplished with low overhead:
-for each string sought and each tap point, we simply keep a counter that
-tracks how many characters of the string have been matched so far, and
-reset the counter as soon as a non-matching character is found. If this
-counter ever equals the length of the string, then we can conclude that
-the tap point has read or written the desired information.
+filenames, window titles, registry key names, and so on. For this kind
+of data, simple string searching is usually sufficient to zero in on the
+few tap points that handle the data of interest, and in our experience
+it is one of the most effective techniques for finding useful tap
+points.
 
 \subsection{Known Unknowns}
 \label{sec:technical:subsec:knownunk}
@@ -67,47 +61,13 @@ instance, to train a model on examples of the contents of \texttt{dmesg}
 under Linux and employ it to locate tap points that write analogous data
 in other operating systems such as FreeBSD, Minix, and Haiku.
 
-In TZB, we accomplish this by collecting bigram statistics for all tap
-points seen in execution, as well as for the exemplar; the data seen at
-each tap point is thus represented as a sparse vector with 65,536
-elements (one for each possible pair of bytes). We can then sort the tap
-points seen by taking the distance (according to some metric) from the
-exemplar. For our metric, we have chosen to use Jensen-Shannon
-divergence~\cite{Lin:2006fk}, which is a smoothed and symmetrized
-version of the classic Kullback-Leibler
-divergence~\cite{Kullback:1951uq} (also known as information gain). We
-also examined the Euclidean and cosine distance metrics, but found their
-performance to be consistently worse than Jensen-Shannon. Jensen-Shannon
-divergence between two probability distributions $P$ and $Q$ is defined
-as:
-
-\[
-JSD(P, Q) = H \left ( \frac{P+Q}{2} \right ) - \frac{H(P)+H(Q)}{2}
-\]
-
-\noindent where $H$ is Shannon entropy.
-
 In addition to statistical comparison to a known exemplar, we can also
 search for data of unknown format if we have access to some external
 validator. This is the case, for example, when searching for tap points
 that write encryption keys: although the exact key may not be known in
-advance (ruling out the use of the \texttt{stringsearch} plugin), if we
-have bit of encrypted data we can check whether a given byte string is a
-valid decryption key.
-
-In TZB, we currently implement this strategy for finding tap points that
-write SSL/TLS master secrets, the 48-byte strings from which an
-SSL/TLS-encrypted session's keys are derived. In the training phase, we
-record the execution of a program that initiates an encrypted connection
-to some server; we also record the encrypted packets sent by the client.
-Then, using the \texttt{keyfind} plugin, we test each 48 bytes written
-by each tap point and see whether the keys derived from it successfully
-decrypt a sample packet sent by the client. If so, then we conclude that
-the tap point can be used to decrypt SSL/TLS connections made by the
-program under inspection. In Section~\ref{sec:eval:subsec:sslmal} we show
-how this technique can be used to spy on connections made by the Sykipot
-malware, without performing a (potentially detectable) man in the middle
-attack.
+advance (ruling out the use of string matching), if we have bit of
+encrypted data we can check whether a given byte string is a valid
+decryption key by trying to decrypt our sample data.
 
 \subsection{Unknown Unknowns}
 
@@ -120,12 +80,3 @@ points that handle similar data. The idea is that one can then examine
 exemplars from each cluster, rather than being forced to look through a
 large number of tap points. Thus, our use of clustering functions as a
 form of \emph{data triage}.
-
-Our clustering is based on the venerable $k$-means
-algorithm~\cite{Steinhaus:1956kx}, but using the Jensen-Shannon
-divergence described in the previous section. As in the statistical
-search case, we use bigram statistics for our feature vectors.
-Initialization uses the KMeans++ algorithm~\cite{Arthur:2007ve}, which
-helps guarantee that the initial cluster centers are widely separated.
-We evaluate the performance of this clustering compared to an expert
-labeling in Section~\ref{sec:eval:subsec:cluster}.

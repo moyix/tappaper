@@ -1,8 +1,6 @@
 File
 
 filetest 62
-filetest2 57
-filetest3 71
 deb-squeeze-filetest 35
 freebsd-filetest 14
 haiku-filetest 51
