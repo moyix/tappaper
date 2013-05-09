@@ -16,7 +16,9 @@ these will be more meaningful to the reader than the raw addresses, but
 we emphasize that debug information is in no way required for TZB to
 work.
 
-\subsection{URL Access}
+\subsection{Known Knowns}
+
+\subsubsection{URL Access}
 \label{sec:eval:subsec:url}
 
 \begin{table*}
@@ -58,7 +60,7 @@ the ASCII and UTF-16 representations of the three URLs, and then
 validated each tap point found to ensure that it wrote only the desired
 data. The results can be seen in Table~\ref{tbl:url}.
 
-\subsection{TLS/SSL Master Secrets}
+\subsubsection{TLS/SSL Master Secrets}
 \label{sec:eval:subsec:ssl}
 
 \begin{table*}
@@ -136,43 +138,7 @@ We note that uncovering similar information using traditional techniques
 would have required significant expertise and reverse engineering of
 both open source and proprietary software.
 
-\subsection{SSL Malware}
-\label{sec:eval:subsec:sslmal}
-
-The need to snoop on SSL-encrypted connections arises in malware
-analysis as well. Two features distinguish this case from that of
-intercepting the traffic of benign SSL clients presented in the previous
-section. First, the ability to decrypt the traffic without a man in the
-middle is even more important: in contrast to benign clients, we cannot
-assume that malware will accept certificates signed by our certificate
-authority. Second, we cannot rely on having access to the server's
-master secret, as the server is under the attacker's control. This means
-that our previous strategy of using a simple string search for the
-master secret will not work here.
-
-Instead, we located the tap point in the SSL-enabled malware by creating
-a PANDA plugin called \texttt{keyfind} that performs trial decryption on
-a packet sent by the malware using each possible 48-byte sequence
-written to memory as a key.  Although this is much slower than a string
-match, it is the only available option, since the key is not known in
-advance.
-
-To test the plugin, we obtained a copy of a version of the Sykipot
-trojan released around October 31st, 2012~\cite{sandymal} (MD5:
-\texttt{34a1010846c0502f490f17b66fb05a12}). We then created a recording
-in which we executed the malware; simultaneously, we captured network
-traffic using \texttt{tcpdump}. We noted that the malware made several
-encrypted connections to \url{https://www.hi-techsolutions.org/}, and
-provided one of the encrypted packets from these connections as input to
-the \texttt{keyfind} plugin. The plugin found the same tap point as the
-Windows 7 IE8 experiment described in the previous section, indicating
-that both the malware and IE8 likely use the same underlying system
-mechanism to make SSL connections. The key found was able to decrypt the
-connections contained in the packet dump.\footnote{The malware also has
-a second layer of encryption, which custom and not based on SSL; we did
-not attempt to decrypt this second layer.}
-
-\subsection{File Access}
+\subsubsection{File Access}
 \label{sec:eval:subsec:file}
 
 \begin{table*}
@@ -227,7 +193,44 @@ point to just file accesses; the ``deepest'' caller was
 \texttt{IopCreateFile} (which, despite its name, is used for both
 opening existing files and creating new ones).
 
-\subsection{Finding \large \texttt{dmesg}}
+\subsection{Known Unknowns}
+\subsubsection{SSL Malware}
+\label{sec:eval:subsec:sslmal}
+
+The need to snoop on SSL-encrypted connections arises in malware
+analysis as well. Two features distinguish this case from that of
+intercepting the traffic of benign SSL clients presented in the previous
+section. First, the ability to decrypt the traffic without a man in the
+middle is even more important: in contrast to benign clients, we cannot
+assume that malware will accept certificates signed by our certificate
+authority. Second, we cannot rely on having access to the server's
+master secret, as the server is under the attacker's control. This means
+that our previous strategy of using a simple string search for the
+master secret will not work here.
+
+Instead, we located the tap point in the SSL-enabled malware by creating
+a PANDA plugin called \texttt{keyfind} that performs trial decryption on
+a packet sent by the malware using each possible 48-byte sequence
+written to memory as a key.  Although this is much slower than a string
+match, it is the only available option, since the key is not known in
+advance.
+
+To test the plugin, we obtained a copy of a version of the Sykipot
+trojan released around October 31st, 2012~\cite{sandymal} (MD5:
+\texttt{34a1010846c0502f490f17b66fb05a12}). We then created a recording
+in which we executed the malware; simultaneously, we captured network
+traffic using \texttt{tcpdump}. We noted that the malware made several
+encrypted connections to \url{https://www.hi-techsolutions.org/}, and
+provided one of the encrypted packets from these connections as input to
+the \texttt{keyfind} plugin. The plugin found the same tap point as the
+Windows 7 IE8 experiment described in the previous section, indicating
+that both the malware and IE8 likely use the same underlying system
+mechanism to make SSL connections. The key found was able to decrypt the
+connections contained in the packet dump.\footnote{The malware also has
+a second layer of encryption, which custom and not based on SSL; we did
+not attempt to decrypt this second layer.}
+
+\subsubsection{Finding \large \texttt{dmesg}}
 \label{sec:eval:subsec:dmesg}
 
 \begin{table*}
@@ -315,7 +318,8 @@ the last log message printed was ``Calibrating delay loop...''; based on
 this we determined that the guest was hung waiting for a timer interrupt
 that was not yet implemented in QEMU.
 
-\subsection{Clustering}
+\subsection{Unknown Unknowns}
+\subsubsection{Clustering}
 \label{sec:eval:subsec:cluster}
 
 To test the effectiveness of clustering tap points based on bigram
