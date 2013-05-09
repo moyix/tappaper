@@ -40,14 +40,13 @@ the user.}
 \label{tbl:url}
 \end{table*}
 
-As with file access, monitoring visited URLs is likely to be of use to
-host-based intrusion detection and prevention systems. For example, an
-IDS may wish to verify that outgoing requests were initiated by a human
-rather than malware on the users's machine, or match URLs visited
-against a blacklist of malicious sites. This poses a challenge for
-existing introspection solutions, as URL load notification is not
-generally exposed by a public API, and the data resides in a user
-application (the browser).
+Monitoring visited URLs is likely to be useful for host-based intrusion
+detection and prevention systems. For example, an IDS may wish to verify
+that outgoing requests were initiated by a human rather than malware on
+the users's machine, or match URLs visited against a blacklist of
+malicious sites. This poses a challenge for existing introspection
+solutions, as URL load notification is not generally exposed by a public
+API, and the data resides in a user application (the browser).
 
 To find URL tap points, we created training executions by visiting a set
 of three URLs (Google, Facebook, and Bing) the following operating
@@ -196,7 +195,7 @@ not attempt to decrypt this second layer.}
 
 Monitoring file accesses is a requirement for many host-based security
 applications, including on-access anti-virus scanners. Thus, locating a
-tap point at which systemwide file accesses can be observed is of
+tap point at which system-wide file accesses can be observed is of
 considerable importance. However, because previous approaches to the
 introspection problem~\cite{Dolan-Gavitt:2011uq,Fu:2012fk} passively
 retrieve information from the guest and are not event-driven, they
@@ -456,3 +455,31 @@ which ranges from -1 to 1, with 1 being a clustering that perfectly
 matches the hand-labeled examples.}
 \label{tbl:clustqual}
 \end{table}
+
+\subsection{Accuracy}
+\label{sec:eval:subsec:accuracy}
+
+Leaving aside the clustering results for the moment, the analyses
+implemented in TZB are extremely effective at helping to identify
+interposition points for active monitoring. In the evaluations based on
+string searching, we found that the number of tap points we had to look
+at manually was at most 262 (URLs under IE8) and in the best case we
+only had to examine two tap points (for SSL keys under Firefox, Opera,
+Haiku, and OpenSSL on ARM). The number of tap points that need to be
+examined is related to how widely the data is propagated in the system
+and how common the string being searched for is; thus, it is natural
+that URLs visited in the browser would appear in many tap points,
+whereas the SSL/TLS master key would not. Qualitatively speaking, we
+found that once the candidate tap points had been selected by
+\texttt{stringsearch} for a given execution, it took at most an hour to
+find one that sufficed for the task at hand.
+
+For the \texttt{dmesg} evaluation, we also examined the quality of the
+results found for each operating system using the standard ``Precision
+at 10'' metric, which is just the number of results found in the top 10
+that were actually relevant to the query. In this case, this is simply
+the fraction of results in the top 10 that appeared to contain the
+system log (even if it was incomplete). Based on this metric, the
+precision of our retrieval was between 20\% (on Minix) and 100\% (on
+Haiku). This means that if one looked at all of the top 10 entries, it
+is guaranteed that one would find the correct tap point.
