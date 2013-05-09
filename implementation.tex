@@ -86,17 +86,6 @@ of the basic block, because by definition a return terminates a basic
 block, so the return address will always fall at the beginning of a
 block.
 
-An additional complication is that a single process may have multiple
-threads, which implies multiple independent call stacks. To deal with
-this, we implemented an optional feature in the call stack plugin that
-monitors changes in the stack pointer, and creates a new shadow call
-stack when the value of the stack pointer jumps by more than a fixed
-threshold (currently 5000 bytes, a parameter we determined empirically).
-This extra precision comes at a performance penalty, however
-(approximately 2x slowdown over normal shadow stack tracking), and for
-TZB we usually only need one level of caller information, so the results
-given in this paper do not use this feature.
-
 We note that these techniques may fail if traditional call-return
 semantics are violated. For example, if a program emulated calls and
 returns by manually pushing the return address and using a direct jump,

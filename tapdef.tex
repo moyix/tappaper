@@ -33,16 +33,20 @@ Instead, we define tap points as the triple
 Including the caller and the address space (the \texttt{CR3} register on
 x86, and the \texttt{CP15 c2} register on ARM) separates out memory
 accesses into streams that should, in general contain the same type of
-data. Figure \ref{fig:tappoint} shows the effect of choosing various
-definitions of a tap point when looking for the place where the browser
-writes the URL entered by the user (``google.com''). At the coarsest
-granularity (a), one can simply look at all writes from the CPU to RAM;
-however, the desired information is buried among reams of irrelevant
-data.  Separating out tap points by program and program counter (b) is
-better, but still combines uses of \texttt{strcpy} that contain
-different information --- in this case, a filename and a URL. By
-including the calling context (c), we can finally obtain a tap point
-that contains just the desired information.
+data.\footnote{Making use of tap points defined this way in the real
+world is slightly more difficult, since a program's address space will
+differ and its code may be relocated by ASLR. These complications can be
+overcome with a minor amount of engineering, however.} Figure
+\ref{fig:tappoint} shows the effect of choosing various definitions of a
+tap point when looking for the place where the browser writes the URL
+entered by the user (``google.com''). At the coarsest granularity (a),
+one can simply look at all writes from the CPU to RAM; however, the
+desired information is buried among reams of irrelevant data.
+Separating out tap points by program and program counter (b) is better,
+but still combines uses of \texttt{strcpy} that contain different
+information --- in this case, a filename and a URL. By including the
+calling context (c), we can finally obtain a tap point that contains
+just the desired information.
 
 It is possible that some tap points may require deeper information about
 the calling context (for example, if an application has its own wrapper
