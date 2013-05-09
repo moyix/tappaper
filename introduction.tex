@@ -2,7 +2,7 @@
 \label{sec:introduction}
 
 Many security applications have a need to inspect the internal workings
-of software. Host-based intrusion systems, malware analyses, and
+of software. Host-based intrusion detection systems, malware analyses, and
 digital forensics all depend to some degree on being able to obtain
 information about software that is by design undocumented and hidden
 from public view. Thus, to operate correctly, security software is
@@ -40,15 +40,16 @@ In this paper, we attempt to address the limitations of past solutions
 by examining a rich source of information about system and application
 activity: memory accesses observed at runtime. Our key insight is that a
 memory access made at a different points in a program can be treated as
-a streams of information that are likely to be of the same type. For
-example, when visiting a URL, a web browser must write to memory the URL
-that is being visited, and it will generally do so at the same point in
-the program; by intercepting memory accesses made at this program point
-we can observe all URLs visited. These program points, which we call
-\emph{tap points}, provide a natural place to interpose to extract
-security-relevant information.
+a stream of related information. For example, when visiting a URL, a web
+browser must write to memory the URL that is being visited, and it will
+generally do so at the same point in the program. By intercepting memory
+accesses made at this program point we can observe all URLs visited. These
+program points, which we call \emph{tap points}, provide a natural place
+to interpose to extract security-relevant information, and could be
+integrated into an active monitoring system such as
+Lares~\cite{payne:2008}.
 
-There are a several challenges that must be overcome to make use of tap
+There are several challenges that must be overcome to make use of tap
 points. The first is the sheer amount of data that must be sifted
 through. In ten minutes' worth of execution on a Windows 7 system, for
 example, we observed a total of 18.9 \emph{million} unique tap points
@@ -78,17 +79,18 @@ to support new architectures. This problem has become more pressing in
 recent years, as ARM-based devices such as smartphones have exploded in
 popularity. Because TZB looks at memory accesses, rather than inspecting
 binary code, it naturally supports a wide variety of architectures with
-minimal effort. To demonstrate this, our evaluation includes the and ARM
+minimal effort. To demonstrate this, our evaluation includes the ARM
 architecture in addition to x86, and the techniques we describe easily
 generalize to other architectures.
 
 The remainder of this paper is structured as follows.
-Section~\ref{sec:tapdef} defines precisely how we define a tap point. We
-then explore that definition and its impact on the scope of our work and
-the assumptions it rests on in Section~\ref{sec:scope}.
+Section~\ref{sec:tapdef} precisely defines what a tap point is. We then
+explore that definition and its impact on the scope of our work and the
+assumptions it rests on in Section~\ref{sec:scope}.
 Section~\ref{sec:technical} describes techniques for finding tap points
-of interest. We then discuss our system, Tappan Zee Bridge, which
-implements these techniques, in Section~\ref{sec:implementation}. We
+of interest. We then discuss our system, Tappan Zee Bridge (TZB), which
+implements these techniques, as well as PANDA, a new dynamic analysis
+platform on which TZB is built, in Section~\ref{sec:implementation}. We
 evaluate TZB in Section~\ref{sec:eval}, and show that it is capable of
 finding tap points useful for introspection in a wide variety of
 applications, operating systems, and architectures. Finally, we describe

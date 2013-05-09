@@ -9,44 +9,35 @@ build TZB, but also TZB-specific algorithmic and data-structure solutions.
 
 TZB makes extensive use of the Platform for Architecture-Neutral Dynamic
 Analysis (PANDA), which was developed by the authors in collaboration
-with Northeastern University. A brief description of PANDA follows.
+with (anonymized).
 
 PANDA is based upon version 1.0.1 of the QEMU machine
-emulator~\cite{Bellard:2005}. QEMU is an excellent and common choice
-for whole-system dynamic analysis for two main reasons. First,
-performance is good (about 5x slowdown over native). Second, every basic
-block of guest code is disassembled by the host in order to emulate,
-which means that there are opportunities to interpose analyses at the
-basic block or even instruction level, if desired. Disassembly and code
-generation is fairly sophisticated in that QEMU lowers instructions to
-an intermediate language (IL) in order to employ a single back-end code
-generator, the Tiny Code Generator (TCG). This IL means dynamic
-analyses can potentially be written once and re-used for all 14
-architectures supported by QEMU. Further, this version of QEMU is modern
-enough to be able to boot and run modern operating systems such as
-Windows 7 (earlier versions of QEMU such as 0.9.1 cannot).
+emulator~\cite{Bellard:2005}. QEMU is an excellent and common choice for
+whole-system dynamic analysis for two main reasons. First, performance
+is good (about 5x slowdown over native). Second, every basic block of
+guest code is disassembled by the host in order to emulate, which means
+that there are opportunities to interpose analyses at the basic block or
+even instruction level, if desired. QEMU lowers instructions to an
+intermediate language (IL) in order to employ a single back-end code
+generator, the Tiny Code Generator (TCG). This IL means dynamic analyses
+can potentially be written once and re-used for all 14 architectures
+supported by QEMU. Further, this version of QEMU is modern enough to be
+able to boot and run modern operating systems such as Windows 7 (earlier
+versions of QEMU such as 0.9.1 cannot).
 
 There are three main aspects to PANDA that make it very convenient for
-building dynamic analyses. None are earth-shattering in
-their novelty, but they compose to form a unique and particularly useful
-system that deserves description (a more detailed technical report on
-PANDA is forthcoming). First, PANDA provides a plug-in architecture that
+building dynamic analyses. First, PANDA provides a plug-in architecture that
 readily permits writing guest analyses in C and C++. Plug-in code is
-executed from a number of standard callback locations including
-instructions, before and after basic blocks, hypercalls, system calls,
-physical and virtual memory read and writes, etc. This is not unlike the
+executed from a number of standard callback locations: before and after
+basic blocks, memory read and writes, etc. This is not unlike the
 schemes employed in other whole-system dynamic analysis platforms such
-as BitBlaze~\cite{Song:2008bitblaze} and S2E~\cite{Chipounov:2011s2e}.In
-addition, plugins can export functionality that can then be used in
-other plugins, allowing complex functionality to be built up from simple
-components. For example, most plugins in TZB use the callstack plugin
-(described below) to determine their calling context; this means that
-the analysis plugins need not worry about the messy details of how to
-track calls and returns across different architectures. From a software
-engineering perspective, PANDA's plugin architecture allows the various
-analyses supported by TZB to be cleanly separated from the main
-emulator, which makes for a much more comprehensible and maintainable
-codebase.
+as BitBlaze~\cite{Song:2008bitblaze} and S2E~\cite{Chipounov:2011s2e}.
+In addition, plugins can export functionality that can then be used in
+other plugins, allowing complex behavior to be built up from simple
+components. From a software engineering perspective, PANDA's plugin
+architecture allows the various analyses supported by TZB to be cleanly
+separated from the main emulator, which makes for a much more
+comprehensible and maintainable codebase.
 
 The second aspect of PANDA that makes it an excellent dynamic analysis
 platform is nondeterministic record and replay (RR). In our formulation
@@ -65,10 +56,9 @@ would make the system unusably slow.
 
 The final aspect of PANDA worth mentioning is its integration of LLVM.
 QEMU lowers basic blocks of guest code to its own IL, which PANDA can,
-additionally, re-render as basic blocks of LLVM coden via a module 
-extracted from S2E. We will not discuss this capability any further 
-here as it is not used by TZB.
-
+additionally, re-render as basic blocks of LLVM code via a module 
+extracted from S2E. We omit further discussion of this capability
+as it is not used by TZB.
 
 \subsection{Callstack Monitoring}
 \label{sec:implementation:subsec:callstack}
@@ -83,14 +73,10 @@ described in this section.
 
 To track call stack information, the \texttt{callstack} plugin examines
 each basic block as it is translated, looking for an
-(architecture-specific) call instruction. For x86, we rely on the
-diStorm3~\cite{distorm} disassembler, which supports both x86 and amd64
-and abstracts away the many different forms the call instruction can
-take. On ARM, the instruction set is relatively simple, and we just use
-a poor man's disassembler based on matching bytes, looking for two
-idioms that indicate a call: \texttt{bl} and \texttt{mov lr, pc}. If the
-block includes a call instruction, then we push the return address onto
-a shadow stack after each time that block executes.
+(architecture-specific) call instruction (currently, we look for
+\texttt{call} on x86 and \texttt{bl} and \texttt{mov lr, pc} on ARM). If
+the block includes a call instruction, then we push the return address
+onto a shadow stack after each time that block executes.
 
 Detecting the return from a function does not require any
 architecture-specific code. Before the execution of every basic block,

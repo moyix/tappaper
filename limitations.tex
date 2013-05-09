@@ -17,14 +17,14 @@ operate.
 Another limitation of TZB is its reliance on callstack information to
 locate interposition points. In current systems, keeping track of an
 arbitrary number of callers for each process is prohibitively expensive;
-although stack walking is faster (since it only needs to be invoked the
-monitored code is executed), it is insecure, unreliable, and not
+although stack walking is faster (since it only needs to be invoked when
+the monitored code is executed), it is insecure, unreliable, and not
 available on every architecture. We hope to examine how existing
 solutions such as compiler modifications~\cite{stackshield,Chiueh:2001ys}
 or dynamic binary translation~\cite{Sinnadurai:2008vn} can be used to
 efficiently maintain the shadow stack information needed for TZB.
 
-Finally, as seen in Section~\ref{sec:eval:subsec:cluster}, clustering is
-not currently very useful for finding introspection points of interest.
-We hope to explore more powerful machine learning algorithms to help us
-sift through large numbers of TZB tap points in fugure work.
+Finally, as seen in Section~\ref{sec:eval:subsec:cluster}, the
+clustering results are promising, but not yet fully developed. We hope
+to gain a better understanding of the data found in tap points and seek
+out better features and models for clustering in future work.

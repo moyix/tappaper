@@ -2,22 +2,22 @@
 \label{sec:scope}
 
 The goal of Tappan Zee Bridge is to find points at which to interpose
-for active introspection. More precisely, our goal is to speed the 
-current entirely manual process by which applications or operating
-systems are reverse engineered in order to locate tap points for
-active monitoring. It should be noted that we do not aim to surpass 
-those manual efforts. We have no automatic way, for instance, of 
-knowing for certain if a tap point will fail to output crucial data 
-or, alternately, spew out superfluous information under some future 
-conditions. This is a separate problem to which we see no ready 
-solution. Static analysis of candidate tap points or extensive
-testing are good stop-gaps, but nothing short of fully understanding
-enormous binary code bases can really give complete assurance that 
-a tap point won't miss or cause false alarms in the future. 
+for active monitoring. More precisely, our goal is to speed the current
+entirely manual process by which applications or operating systems are
+reverse engineered in order to locate tap points for active monitoring.
+It should be noted that we do not aim to surpass those manual efforts.
+We have no automatic way, for instance, of knowing for certain if a tap
+point will fail to output crucial data or, alternately, spew out
+superfluous information under some future conditions. This is a separate
+problem to which we see no ready solution. Static analysis of candidate
+tap points or extensive testing are good stop-gaps, but nothing short of
+fully understanding enormous binary code bases can really give complete
+assurance that a tap point won't miss or cause false alarms in the
+future. 
 
 This goal led us to define the notion of a tap point, the context from
 which a memory access occurs. In this section, we explore how our
-definition of a tap point and our focus on active introspection shape
+definition of a tap point and our focus on active monitoring shape
 the scope of our work.
 
 First and most obviously, our focus on memory accesses necessarily
@@ -28,22 +28,12 @@ storing the key or encryption states in RAM by making clever use of the
 x86 debug registers and the AES-NI instruction set. Aside from such
 special cases, however, this assumption is not particularly limiting.
 
-Second, our choice of dynamic analysis limits us to locating
-introspection points for events that can be reliably stimulated within
-our system. It also means that the tap points we find may require some
-validation to ensure that the event they capture has the same semantics
-as the one being sought; this piece is currently done by hand.
-In many cases, a few minutes of manual examination of the code
-surrounding the tap point is all that is required to verify few sets
-ought to be merged for better results. This is quite reasonable
-compared with the alternative of a fully manual technique.
-
-Third, our goal of finding tap points suitable for active introspection
+Second, our goal of finding tap points suitable for active monitoring
 motivates a design that treats memory accesses at tap points as sources
 of \emph{streaming} data. Our algorithms, therefore, typically work in a
 streaming fashion as the system executes, remembering only a fixed
 amount of state for each tap point. Although this is a natural fit for
-active introspection, where events should be reported as soon as
+active active monitoring, where events should be reported as soon as
 possible, it makes handling data whose \emph{spatial} order in memory
 differs from its \emph{temporal} order as it is accessed more difficult.
 
@@ -59,14 +49,7 @@ reasonable choice for a wide variety of introspection tasks.
         \includegraphics[width=3.2in]{figures/memaccess.pdf}
     \end{center}
     \caption{Patterns of memory access that we might wish to monitor
-    using TZB. From left to right and top to bottom: an implementation
-    of \texttt{memmove} that copies data backward in 4-byte chunks; two
-    tap points that both write to the Linux system log (\texttt{dmesg})
-    buffer; an implementation of \texttt{memcpy} that copies data in
-    4-byte chunks, copies any remaining bytes one at a time from a
-    different tap point; a tap point that writes data one character at
-    a time to a serial port. In this diagram, time is represented in
-    units of the number of memory accesses.}
+    using TZB.}
     \label{fig:memaccess}
 \end{figure}
 

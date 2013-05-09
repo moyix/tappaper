@@ -21,8 +21,8 @@ approach can be.
 
 A naive approach to defining tap points would be to simply group memory
 accesses by the program counter that made them (e.g., EIP/RIP on x86 and
-R15 on ARM). However, this approach fails in two common cases: first,
-memory accesses made by bulk copy functions, such as \texttt{memcpy} and
+R15 on ARM). This approach fails in two common cases: first, memory
+accesses made by bulk copy functions, such as \texttt{memcpy} and
 \texttt{strcpy}, would all be grouped together, which would commingle
 data from different parts of the program into the same tap point. In
 addition, looking only at the program counter would conflate accesses
@@ -46,14 +46,15 @@ that contains just the desired information.
 
 It is possible that some tap points may require deeper information about
 the calling context (for example, if an application has its own wrapper
-around \texttt{memcpy}), we have found that just one level of calling
-context is usually sufficient. In addition, because TZB uses a
-whole-system emulator that can watch every call and return, we can
-obtain the call stack to an arbitrary depth for any tap point. This
+around \texttt{memcpy}), but in practice we have found that just one
+level of calling context is usually sufficient. In addition, because TZB
+uses a whole-system emulator that can watch every call and return, we
+can obtain the call stack to an arbitrary depth for any tap point. This
 makes it easy to add extra context for a given tap point, if it is found
-that doing so separates out the desired information. An example of a tap
-point that requires more than one level of callstack information is
-given in Section~\ref{sec:eval:subsec:ssl}.
+that doing so separates out the desired information. Examples of tap
+points that require more than one level of callstack information are
+given in Sections \ref{sec:eval:subsec:ssl} and
+\ref{sec:eval:subsec:file}.
 
 Conversely, one might wonder whether this definition of a tap point may
 split up data that should logically be kept together. To mitigate this

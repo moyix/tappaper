@@ -51,7 +51,7 @@ solutions, as URL load notification is not generally exposed by a public
 API, and the data resides in a user application (the browser).
 
 To find URL tap points, we created training executions by visiting a set
-of three URLs (Google, Facebook, and Bing) the following operating
+of three URLs (Google, Facebook, and Bing) in the following operating
 systems and browsers: Epiphany on Debian squeeze (armel and amd64);
 Firefox 16.0.2, Opera 12.10, and Internet Explorer 8.0.7601.17514 on
 Windows 7 SP1 (x86); and WebPositive r580 on Haiku (x86). As with the
@@ -82,8 +82,7 @@ data. The results can be seen in Table~\ref{tbl:url}.
         \hline
     \end{tabular}
 \caption{Tap points found that write the SSL/TLS master secret for each
-SSL/TLS connection. These keys can be used to perform transparent
-interception of SSL traffic without man-in-the-middle.}
+SSL/TLS connection.}
 \label{tbl:ssl}
 \end{table*}
 
@@ -100,12 +99,12 @@ vulnerabilities~\cite{JarmocBHEU2012}.
 
 Instead of a man-in-the-middle attack, we can instead use TZB to find a
 tap point that reads or writes the SSL/TLS master secret for each
-encrypted connection. Because this secret must be generated for each
-SSL/TLS connection, if we can find such a tap point, it can then be
-provided to the IDS to decrypt and, if necessary, modify the content of
-the SSL stream.
+encrypted connection, giving us a ``man-on-the-inside''. Because this
+secret must be generated for each SSL/TLS connection, if we can find
+such a tap point, it can then be provided to the IDS to decrypt and, if
+necessary, modify the content of the SSL stream.
 
-To find the location of these tap points, we a modified copy of
+To find the location of these tap points, we ran a modified copy of
 OpenSSL's \texttt{s\_server} utility that prints out the SSL/TLS master
 key any time a connection is made. We then recorded executions in which
 we visited the server with each of our tested SSL clients, and noted the
@@ -209,11 +208,11 @@ that our previous strategy of using a simple string search for the
 master secret will not work here.
 
 Instead, we located the tap point in the SSL-enabled malware by creating
-a PANDA plugin called \texttt{keyfind} that performs trial decryption on
-a packet sent by the malware using each possible 48-byte sequence
-written to memory as a key.  Although this is much slower than a string
-match, it is the only available option, since the key is not known in
-advance.
+using our \texttt{keyfind} plugin, which performs trial decryption on a
+packet sent by the malware using each possible 48-byte sequence written
+to memory as a key and verifies whether the Message Authentication Code
+is valid. Although this is much slower than a string match, it is the
+only available option, since the key is not known in advance.
 
 To test the plugin, we obtained a copy of a version of the Sykipot
 trojan released around October 31st, 2012~\cite{sandymal} (MD5:
@@ -227,8 +226,8 @@ Windows 7 IE8 experiment described in the previous section, indicating
 that both the malware and IE8 likely use the same underlying system
 mechanism to make SSL connections. The key found was able to decrypt the
 connections contained in the packet dump.\footnote{The malware also has
-a second layer of encryption, which custom and not based on SSL; we did
-not attempt to decrypt this second layer.}
+a second layer of encryption, which is custom and not based on SSL; we
+did not attempt to decrypt this second layer.}
 
 \subsubsection{Finding \large \texttt{dmesg}}
 \label{sec:eval:subsec:dmesg}
@@ -245,11 +244,13 @@ not attempt to decrypt this second layer.}
         Debian (arm) & N/A & \texttt{do\_syslog+0x18c} & Yes & 4 \\
         Debian (amd64) & N/A & \texttt{do\_syslog+0x163} & Yes & 4 \\ 
         Minix (x86) & \texttt{0x190005ee} & \texttt{0x190009d4} & No & 8 \\
+        Windows 7 (x86) & Not Found & Not Found & ? & ? \\
         \hline
     \end{tabular}
 \caption{Tap points that write the system log (\texttt{dmesg}) on
 several UNIX-like operating systems. All tap points were located in the
-kernel, except for Minix, which is a microkernel.}
+kernel, except for Minix, which is a microkernel. We were unable to find
+a tap point analogous to \texttt{dmesg} in Windows.}
 \label{tbl:dmesg}
 \end{table*}
 
@@ -367,15 +368,17 @@ can be seen in Table~\ref{tbl:clustqual}, our clustering did not match
 up very well on the hand-labeled samples.  Note, however, that labeling
 criteria are selected without knowledge of the sizes of categories or
 whether or not the distance metric will effectively discriminate, so it
-is perhaps hardly surprising that the correspondence is poor.  
+is perhaps unsurprising that the correspondence is poor.
 
 There is some hope, however.  
 Regardless of the apparently poor clustering performance with respect to 
-hand-labeling, we decided to determine if the clusters contained new and 
-interesting data and if finding that data would be facilitated by them.  
-First, we determined to which of the 100 clusters data from the dmesg 
-and filename tap points was assigned.  
-We were heartened to learn that all of these two text-like tap points 
+hand-labeling, we decided to determine if the clusters from FreeBSD's
+boot process contained new and interesting data and if finding that data
+would be facilitated by them.  
+First, we determined to which of the 100 clusters data from the
+FreeBSD's \texttt{dmesg} and filename tap points (found in Sections
+\ref{sec:eval:subsec:dmesg} and \ref{sec:eval:subsec:file}) was assigned.  
+We were heartened to learn that these two text-like tap points 
 had been sent to the same cluster.
 We proceeded to explore this cluster of approximately 5000 tap points, 
 and found that, indeed, the vast majority of the tap points contained 
@@ -383,14 +386,13 @@ readable text of some sort.
 Further, in the course of about thirty minutes of spelunking around this
 cluster, not only kernel messages and filenames, but, additionally, a 
 stone soup of shell scripts, process listings kernel configuration, 
-graphviz files, and so on made an appearance.  
+GraphViz data, and so on made an appearance.  
 A selection of these tap point contents is provided in 
 Appendix~\ref{app:tap-point-contents}.
 We did not exhaustively examine this cluster, but plan to do so soon,
-as it appears to contain much of interst for active monitoring.
+as it appears to contain much of interest for active monitoring.
 If clustering has focused us on one out of 100 clusters, this is 
-potentially a big savings.  
-
+potentially a big savings.
 
 \begin{table}
     \centering
