@@ -16,7 +16,7 @@ creating a recording that captures the desired OS or application
 behavior. For example, if the end goal is to be notified each time a
 user loads a new URL in Firefox, one would create a recording of Firefox
 visiting several URLs. This recording is made by emulating the OS and
-application inside of TZB, which can capture and record all sources of
+application inside of PANDA, which can capture and record all sources of
 non-determinism with low overhead, allowing for later deterministic
 replay. Next, one can run one or more analyses that seek out the desired
 information among all memory accesses seen during the execution.
@@ -31,7 +31,7 @@ tap point. This workflow is illustrated in Figure~\ref{fig:workflow}.
 In this section, we describe three different ways of finding tap points
 grouped according to a standard epistemic classification
 scheme~\cite{Rumsfeld:2002}: searching for ``known knowns''---tap points
-where the desired data and its format is known; searching for ``known
+where the content of the desired data is known; searching for ``known
 unknowns''---tap points where the kind of data sought is known, but its
 precise format is not; and finally ``unknown unknowns''---tap points
 where the type and format of the data sought are not known, and we are

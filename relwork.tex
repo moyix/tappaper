@@ -28,7 +28,7 @@ VMST~\cite{Fu:2012fk} selectively redirects the memory accesses of tools
 like \texttt{ps} and \texttt{netstat} from the security VM so that their
 results are obtained from the guest VM. TZB extends these approaches by
 finding points in applications and the OS at which to perform active
-introspection.
+monitoring.
 
 Based on the observation that memory accesses in dynamic execution can
 reveal the structure of data in memory, several papers have proposed
@@ -40,8 +40,7 @@ insight we have drawn from this body of work is the idea that the point
 in a program at which a piece of data is accessed, along with its
 calling context, can be used as a proxy for determining the type of the
 data. TZB leverages this insight to separate out memory accesses into
-streams of data that, are of the same type and often have the same
-semantic meaning.
+streams of related data.
 
 Finally, there has been some research on examining memory accesses made
 by a single program or a whole system, typically using visualization.

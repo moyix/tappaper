@@ -43,7 +43,7 @@ The second aspect of PANDA that makes it an excellent dynamic analysis
 platform is nondeterministic record and replay (RR). In our formulation
 of RR, we begin a recording by invoking QEMU's built-in snapshot
 capability. Subsequently, we record all inputs to the CPU, including
-INs, interrupts, and DMA. Recording imposes a small overhead (10-20\%)
+\texttt{in}s, interrupts, and DMA. Recording imposes a small overhead (10-20\%)
 but not enough to perturb execution. During replay, we revert to a
 snapshot and proceed to pull CPU inputs from a log when required.
 Unlike many other RR schemes, we do not record and replay device inputs,
@@ -122,9 +122,9 @@ sufficient.
 This effectively implements a very simple deterministic finite automaton
 (DFA) matcher. Indeed, we believe that it should be possible to
 efficiently implement a streaming basic regular expression matcher that
-only an amount of memory logarithmic in the number of states needed to
-represent the expression. We leave this generalization to future work,
-however.
+requires only an amount of memory logarithmic in the number of states
+needed to represent the expression. We leave this generalization to
+future work, however.
 
 \subsection{Statistical Search and Clustering}
 \label{sec:implementation:subsec:bigram}
@@ -143,7 +143,7 @@ chosen to use Jensen-Shannon divergence~\cite{Lin:2006fk}, which is a
 smoothed and symmetrized version of the classic Kullback-Leibler
 divergence~\cite{Kullback:1951uq} (also known as information gain). We
 also examined the Euclidean and cosine distance metrics, but found their
-performance to be consistently worse than Jensen-Shannon. Jensen-Shannon
+performance to be consistently worse. Jensen-Shannon
 divergence between two probability distributions $P$ and $Q$ is defined
 as:
 
@@ -154,7 +154,7 @@ JSD(P, Q) = H \left ( \frac{P+Q}{2} \right ) - \frac{H(P)+H(Q)}{2}
 \noindent where $H$ is Shannon entropy.
 
 Bigram collection is done by maintaining, for each tap point, two pieces
-of information: (1) the last byte that passed through by the tap point,
+of information: (1) the last byte that passed through the tap point,
 so that we can see bigrams that span a single memory access; (2) a
 histogram of all byte pairs seen at the tap point. The latter of these
 must be maintained sparsely: because our bigrams are based on bytes, a

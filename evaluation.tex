@@ -2,7 +2,7 @@
 \label{sec:eval}
 
 In this section, we evaluate the efficacy of our various tap point search
-strategies, described in Section~\ref{sec:technical}, in finding tap
+strategies, described in Section~\ref{sec:technical}, at finding tap
 points useful for introspection. Our experiments are motivated by
 real-world introspection applications, and so for each experiment we
 describe a typical application for the tap points found. Each experiment
@@ -54,11 +54,11 @@ To find URL tap points, we created training executions by visiting a set
 of three URLs (Google, Facebook, and Bing) in the following operating
 systems and browsers: Epiphany on Debian squeeze (armel and amd64);
 Firefox 16.0.2, Opera 12.10, and Internet Explorer 8.0.7601.17514 on
-Windows 7 SP1 (x86); and WebPositive r580 on Haiku (x86). As with the
-file access case, we used the \texttt{stringsearch} plugin to search for
-the ASCII and UTF-16 representations of the three URLs, and then
-validated each tap point found to ensure that it wrote only the desired
-data. The results can be seen in Table~\ref{tbl:url}.
+Windows 7 SP1 (x86); and WebPositive r580 on Haiku (x86). We used the
+\texttt{stringsearch} plugin to search for the ASCII and UTF-16
+representations of the three URLs, and then validated each tap point
+found to ensure that it wrote only the desired data. The results can be
+seen in Table~\ref{tbl:url}.
 
 \subsubsection{TLS/SSL Master Secrets}
 \label{sec:eval:subsec:ssl}
@@ -119,16 +119,15 @@ Table~\ref{tbl:ssl}.
 
 There is one particular point of interest to observe in these results.
 In the case of Epiphany on Debian, we found that one level of callstack
-information was \emph{not} sufficient, in contrast to the other results
-reported here---with only the immediate caller, the tap point contains
-more data than just the SSL/TLS master secret. This is because the
-version of Epiphany uses SSLv3 to make connections, and the
-pseudo-random function (PRF) used in SSLv3 has the form
-\[ MD5(SHA1(\ldots))\] The other implementations instead use TLSv1.0,
-where the PRF has the form \[ MD5(\ldots) \oplus SHA1(\ldots) \] This final
+information was \emph{not} sufficient---with only the immediate caller,
+the tap point contains more data than just the SSL/TLS master secret.
+This is because the version of Epiphany uses SSLv3 to make connections,
+and the pseudo-random function (PRF) used in SSLv3 has the form
+\[ MD5(SHA1(\ldots))\] The other implementations instead use TLSv1.0, where
+the PRF has the form \[ MD5(\ldots) \oplus SHA1(\ldots) \] This final
 XOR operation is done from a unique program point, so the tap point that
 results from it contains only TLS master keys. This points to a
-potential downside of using tap points for introspection: it is not
+potential complication of using tap points for introspection: it is not
 always clear in advance how many levels of call stack information will
 be required.
 
@@ -175,7 +174,7 @@ squeeze (armel), Windows 7 SP1 32-bit, FreeBSD 9.0, and Haiku R1 Alpha
 matching the ASCII and UTF-16 encodings of the filenames using the
 \texttt{stringsearch} analysis plugin. The UTF-16 encodings were
 included because it was known that Windows 7 uses UTF-16 for strings
-pervasively, allowing us to surmise that filenames would likely be
+pervasively, allowing us to surmise that on Windows URLs would likely be
 UTF-16 encoded. Finally, we looked at the tap points found by
 \texttt{stringsearch}, and validated them by hand.
 
@@ -222,7 +221,7 @@ traffic using \texttt{tcpdump}. We noted that the malware made several
 encrypted connections to \url{https://www.hi-techsolutions.org/}, and
 provided one of the encrypted packets from these connections as input to
 the \texttt{keyfind} plugin. The plugin found the same tap point as the
-Windows 7 IE8 experiment described in the previous section, indicating
+Windows 7 IE8 experiment described earlier, indicating
 that both the malware and IE8 likely use the same underlying system
 mechanism to make SSL connections. The key found was able to decrypt the
 connections contained in the packet dump.\footnote{The malware also has
@@ -267,19 +266,20 @@ OS, we can find \texttt{dmesg}-like tap points on other systems.
 
 To locate these system log tap points, we first created a training
 exemplar by running the \texttt{dmesg} command on a Debian sid (amd64)
-host, and computing the bigram probabilities for the output. We then
-created recordings in which we booted five operating systems: Debian
+host and computing the bigram probabilities for the output. We then
+created recordings in which we booted five operating systems (Debian
 squeeze (armel), Debian squeeze (amd64), Minix R3-2.0 (i386), FreeBSD
-9.0-RELEASE (i386), and Haiku R1 Alpha 3 (i386), and computed the same
+9.0-RELEASE (i386), and Haiku R1 Alpha 3 (i386)), and computed the same
 bigram statistics. We then sorted the tap points seen in each operating
 system boot according to their Jensen-Shannon distance from the training
 distribution, and manually examined data written by the tap point for
-each of the top 30 results in each operating system. Table~\ref{tbl:dmesg}
-shows, for each operating system tested, the tap point that we determined to be
-the system log, and its rank in the search results.
+each of the top 30 results in each operating system.
+Table~\ref{tbl:dmesg} shows, for each operating system tested, the tap
+point that we determined to be the system log, and its rank in the
+search results.
 
 We can see that in all cases the correct result is in the top 10. There
-are two additional features about Table~\ref{tbl:dmesg} that bear
+are two additional features of Table~\ref{tbl:dmesg} that bear
 mentioning. First, the reader will note that the two Debian systems have
 a caller of ``N/A''. This is because the memory writes that make up
 \texttt{dmesg} are done in \texttt{do\_syslog}, which is called from
@@ -304,7 +304,7 @@ are not stored, and instead are generated when the user views the log.
 This means that there is no tap point that will contain log messages of
 the type used in our \texttt{dmesg} training, and the methods described
 in this paper are largely inapplicable unless a training example for the
-binary format can be found. However, because there event log query API
+binary format can be found. However, because the event log query API
 is public~\cite{evtquery}, existing tools such as
 Virtuoso~\cite{Dolan-Gavitt:2011uq} might be a better fit for this use
 case.
@@ -358,7 +358,7 @@ the labels described in Table~\ref{tbl:clustlabels}, and the two
 labelers then worked together to reconcile their labels.  
 
 Finally, we ran a $k$-means clustering with $k = 10$; $10$ was chosen
-because it was a round number reasonably close the number of labels our
+because it was a round number reasonably close to the number of labels our
 human evaluators gave to the data. We then used the Adjusted Rand
 Index~\cite{Hubert:1985zr} to score the quality of our clustering
 relative to our hand-labeled examples. The Adjusted Rand Index for a
@@ -366,16 +366,17 @@ clustering ranges from -1 to 1; clusterings which are independent of the
 hand labeling will receive a score that is negative or close to zero. As
 can be seen in Table~\ref{tbl:clustqual}, our clustering did not match 
 up very well on the hand-labeled samples.  Note, however, that labeling
-criteria are selected without knowledge of the sizes of categories or
-whether or not the distance metric will effectively discriminate, so it
+criteria were selected without knowledge of the sizes of categories or
+whether or not the distance metric would effectively discriminate, so it
 is perhaps unsurprising that the correspondence is poor.
 
 There is some hope, however.  
 Regardless of the apparently poor clustering performance with respect to 
-hand-labeling, we decided to determine if the clusters from FreeBSD's
+hand-labeling, we decided to determine if the clusters from our 100-mean
+clustering of FreeBSD's
 boot process contained new and interesting data and if finding that data
 would be facilitated by them.  
-First, we determined to which of the 100 clusters data from the
+First, we determined to which of the clusters data from the
 FreeBSD's \texttt{dmesg} and filename tap points (found in Sections
 \ref{sec:eval:subsec:dmesg} and \ref{sec:eval:subsec:file}) was assigned.  
 We were heartened to learn that these two text-like tap points 
@@ -384,9 +385,9 @@ We proceeded to explore this cluster of approximately 5000 tap points,
 and found that, indeed, the vast majority of the tap points contained 
 readable text of some sort.  
 Further, in the course of about thirty minutes of spelunking around this
-cluster, not only kernel messages and filenames, but, additionally, a 
+cluster, we found not only kernel messages and filenames but a 
 stone soup of shell scripts, process listings kernel configuration, 
-GraphViz data, and so on made an appearance.  
+GraphViz data, and so on.
 A selection of these tap point contents is provided in 
 Appendix~\ref{app:tap-point-contents}.
 We did not exhaustively examine this cluster, but plan to do so soon,
