@@ -114,7 +114,7 @@ wrote exactly one master key per connection. For this test, we used:
 OpenSSL s\_client 0.9.8 on Debian squeeze (armel), OpenSSL s\_client
 0.9.8 and Epiphany 2.30.6 on Debian squeeze (amd64), and Firefox
 16.0.2, Google Chrome 23.0.1271.64, Opera 12.10, and Internet Explorer
-8.0.7601.17514 on Windows 7 SP1 (x86). The results are shown in
+8.0.7601 on Windows 7 SP1 (x86). The results are shown in
 Table~\ref{tbl:ssl}.
 
 There is one particular point of interest to observe in these results.
@@ -343,7 +343,7 @@ Given that the vast majority of tap points do not write interesting
 information, we opted not to sample uniformly from the all tap points
 found. Instead, we performed an initial $k$-means clustering with $k =
 100$, and then picked out tap points at various distances from each
-cluster center. For each cluster, we chose the tap point at $\sigma$
+cluster center. We chose the tap point at $\sigma$
 standard deviations from the center, for $\sigma \in \left\{0, 0.5,
 0.75, 1.0, 1.25, 1.5, 1.75, 2.0 \right\}$ for a total of 2,926
 samples\footnote{The alert reader will note that this is smaller than

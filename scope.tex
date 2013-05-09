@@ -83,7 +83,7 @@ streaming.
 
 Finally, the upper right, which represents the case of \texttt{dmesg} on
 Linux, is an example of the ``dilemma of context''. Although the
-function that writes log data to memory (\texttt{do\_syslog}) is called
+function, \texttt{do\_syslog}, that writes log data to memory  is called
 from multiple places (creating multiple tap points), it writes to the
 same contiguous buffer. Unlike the \texttt{memcpy} case, a significant
 amount of time may pass before the next function calls

@@ -102,22 +102,21 @@ gigabytes of data that pass through tap points during any given
 execution, it is vital that string search be efficient in both time and
 space.
 
-To satisfy these constraints, we developed a string matching algorithm
-(implemented as a PANDA plugin called \texttt{stringsearch}) that
-requires only one byte of memory per search string and per tap point.
-This one-byte counter tracks, for a given tap point, how many bytes of
-the search string have been matched by the data seen at the tap point so
-far. Whenever a byte is read from or written to memory, we can check
-what the next byte in the search string is using this position, and
-compare it to the byte passing through the tap point. If it matches, the
-counter is incremented; if it does not match, the counter is reset to
-zero. When the counter equals the length of the search string, we know
-that the search string has passed through the tap point, and we report a
-match. Note that because the counter is only one byte, our matcher only
-supports strings up to 256 bytes long; this cap could be easily raised
-to 65,536 bytes by using a two-byte counter, at the cost of doubling the
-memory requirements. Thus far, 256-byte strings have been more than
-sufficient.
+To satisfy these constraints, we developed \texttt{stringsearch}, a
+plugin which requires only one byte of memory per search string and per
+tap point.  This one-byte counter tracks, for a given tap point, how
+many bytes of the search string have been matched by the data seen at
+the tap point so far. Whenever a byte is read from or written to memory,
+we can check what the next byte in the search string is using this
+position, and compare it to the byte passing through the tap point. If
+it matches, the counter is incremented; if it does not match, the
+counter is reset to zero. When the counter equals the length of the
+search string, we know that the search string has passed through the tap
+point, and we report a match. Note that because the counter is only one
+byte, our matcher only supports strings up to 256 bytes long; this cap
+could be easily raised to 65,536 bytes by using a two-byte counter, at
+the cost of doubling the memory requirements. Thus far, 256-byte strings
+have been more than sufficient.
 
 This effectively implements a very simple deterministic finite automaton
 (DFA) matcher. Indeed, we believe that it should be possible to
