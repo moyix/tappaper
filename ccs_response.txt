@@ -1,0 +1,70 @@
+We would like to thank our reviewers for taking the time to review our
+work, and for their insightful questions and critiques.
+
+Several reviews wondered how TZB would deal with ASLR. If the PC and
+caller in a tap point are taken to be absolute addresses, then ASLR will
+indeed prevent a tap point from being usable across different program
+invocations. However, it is simple enough to instead record the PC and
+caller information relative to their respective module in the process
+address space (e.g., libc+0x123). The addresses and sizes of loaded
+modules can be obtained via public APIs (e.g., /proc/self/maps on Linux
+and FreeBSD) and so existing systems such as Virtuoso or VMST can be
+used to extract this information without reverse engineering. This
+allows tap points to be portable across multiple program invocations and
+across different machines. Tap points are not portable across different
+program and library versions as the code locations will shift.
+
+There is one situation in which re-identification of a discovered tap
+point will be difficult or even impossible: code generated at runtime
+(i.e., JIT or injected code). We do not feel that this makes TZB's tap
+points a poor choice for intrusion detection: tap points located in
+system and library code will still reveal the behavior of the injected
+code if it makes any calls into monitored code. However, given the rise
+of languages that depend on JIT runtimes, better solutions are needed
+for this scenario, and we will update our Future Work section
+accordingly.
+
+The comments about the "Unknown Unknowns" section are well taken. We
+feel that the clustering results obtained are more suggestive than
+conclusive, indicating that more research in this area may be fruitful.
+This is mentioned in Section 7, but should be more prominently mentioned
+in the body of Section 6.3.
+
+PANDA itself does not contain any novel research contributions; the
+novelty of our research lies in TZB, which is built on top of PANDA.
+Many of TZB's features crucially depend on PANDA, and since there is as
+yet no public document describing PANDA, we felt it prudent to introduce
+the framework.
+
+We would be happy to add information about the amount of time mining
+takes. We note, however, that the performance of TZB only affects the
+tap point discovery process, which only has to be done once per version
+of the software in question. The tap points found by TZB can be used to
+actively monitor a live system; the performance overhead of such
+monitoring has been explored in more detail in Payne et al. 2008 and
+Sharif et al.  2009.
+
+The requirement that data encoding be guessable is indeed an assumption
+of the "Known Knowns" strategy, and we will update that section
+accordingly.
+
+We have not rigorously evaluated the false positive and negative rates
+of tap point correlation. Rather, we used it in cases where the tap
+point output seemed incomplete (e.g., the Haiku dmesg experiment). The
+conditions under which tap point correlation is expected to succeed are
+spelled out in Section 3.
+
+[X] R1P1 ASLR / Tap point portability
+[X] R1P2 Data Encoding
+[X] R1P3 Runtime overhead
+[X] R1P4 Soundness of tap point correlation
+[X] R1P5 PANDA a contribution?
+[X] R1P6 Unknown Unknowns unconvincing
+[ ] R1P7 Writing/editing fixes
+[X] R2P1 Same as R1P1
+[X] R3P1 Malicious attacks? (e.g. code injection)
+[ ] R3P2 Non-process context granularity (e.g. kernel threads)
+[ ] R3P3 Writing fix (use-before-def of PANDA)
+[X] R3P4 Same as R1P1 but also mentions JIT code
+[ ] R3P5 Does inlining cause problems?
+[ ] R3P6 Writing fix (5.5 misplaced)
