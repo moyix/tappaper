@@ -7,22 +7,21 @@ indeed prevent a tap point from being usable across different program
 invocations. However, it is simple enough to instead record the PC and
 caller information relative to their respective module in the process
 address space (e.g., libc+0x123). The addresses and sizes of loaded
-modules can be obtained via public APIs (e.g., /proc/self/maps on Linux
-and FreeBSD) and so existing systems such as Virtuoso or VMST can be
+modules can be obtained via public APIs (e.g., EnumProcessModules 
+on Windows) and so existing systems such as Virtuoso or VMST can be
 used to extract this information without reverse engineering. This
 allows tap points to be portable across multiple program invocations and
 across different machines. Tap points are not portable across different
 program and library versions as the code locations will shift.
 
-There is one situation in which re-identification of a discovered tap
-point will be difficult or even impossible: code generated at runtime
-(i.e., JIT or injected code). We do not feel that this makes TZB's tap
-points a poor choice for intrusion detection: tap points located in
-system and library code will still reveal the behavior of the injected
-code if it makes any calls into monitored code. However, given the rise
-of languages that depend on JIT runtimes, better solutions are needed
-for this scenario, and we will update our Future Work section
-accordingly.
+Code generated at runtime (i.e., JIT or injected code) may make
+re-identification of a discovered tap point difficult or even
+impossible. We do not feel that this makes TZB's tap points a poor
+choice for intrusion detection: tap points located in system and library
+code will still reveal the behavior of the injected code if it makes any
+calls into monitored code. However, given the rise of languages that
+depend on JIT runtimes, better solutions are needed for this scenario,
+and we will update our Future Work section accordingly.
 
 The comments about the "Unknown Unknowns" section are well taken. We
 feel that the clustering results obtained are more suggestive than
