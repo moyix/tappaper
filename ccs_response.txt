@@ -2,7 +2,7 @@ We would like to thank our reviewers for taking the time to review our
 work, and for their insightful questions and critiques.
 
 Several reviews wondered how TZB would deal with ASLR. If the PC and
-caller in a tap point are taken to be absolute addresses, then ASLR will
+caller in a tap point are absolute addresses, then ASLR will
 indeed prevent a tap point from being usable across different program
 invocations. However, it is simple enough to instead record the PC and
 caller information relative to their respective module in the process
@@ -39,9 +39,9 @@ We would be happy to add information about the amount of time mining
 takes. We note, however, that the performance of TZB only affects the
 tap point discovery process, which only has to be done once per version
 of the software in question. The tap points found by TZB can be used to
-actively monitor a live system; the performance overhead of such
+monitor a live system; the performance overhead of such
 monitoring has been explored in more detail in Payne et al. 2008 and
-Sharif et al.  2009.
+Sharif et al. 2009.
 
 The requirement that data encoding be guessable is indeed an assumption
 of the "Known Knowns" strategy, and we will update that section
@@ -49,7 +49,7 @@ accordingly.
 
 We have not rigorously evaluated the false positive and negative rates
 of tap point correlation. Rather, we used it in cases where the tap
-point output seemed incomplete (e.g., the Haiku dmesg experiment). The
+point output seemed incomplete (e.g., Haiku's dmesg). The
 conditions under which tap point correlation is expected to succeed are
 spelled out in Section 3.
 
