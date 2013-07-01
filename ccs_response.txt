@@ -7,8 +7,8 @@ indeed prevent a tap point from being usable across different program
 invocations. However, it is simple enough to instead record the PC and
 caller information relative to their respective module in the process
 address space (e.g., libc+0x123). The addresses and sizes of loaded
-modules can be obtained via public APIs (e.g., EnumProcessModules 
-on Windows) and so existing systems such as Virtuoso or VMST can be
+modules can be obtained via public APIs (e.g., /proc/self/maps on Linux
+and FreeBSD) and so existing systems such as Virtuoso or VMST can be
 used to extract this information without reverse engineering. This
 allows tap points to be portable across multiple program invocations and
 across different machines. Tap points are not portable across different
