@@ -206,7 +206,7 @@ master secret, as the server is under the attacker's control. This means
 that our previous strategy of using a simple string search for the
 master secret will not work here.
 
-Instead, we located the tap point in the SSL-enabled malware by creating
+Instead, we located the tap point in the SSL-enabled malware
 using our \texttt{keyfind} plugin, which performs trial decryption on a
 packet sent by the malware using each possible 48-byte sequence written
 to memory as a key and verifies whether the Message Authentication Code
