@@ -1,4 +1,30 @@
-\documentclass{sig-alternate}
+\documentclass{sig-alternate-2013}
+
+\newfont{\mycrnotice}{ptmr8t at 7pt}
+\newfont{\myconfname}{ptmri8t at 7pt}
+\let\crnotice\mycrnotice%
+\let\confname\myconfname%
+
+\permission{Permission to make digital or hard copies of all or part of
+    this work for personal or classroom use is granted without fee
+    provided that copies are not made or distributed for profit or
+    commercial advantage and that copies bear this notice and the full
+    citation on the first page. Copyrights for components of this work
+    owned by others than the author(s) must be honored. Abstracting with
+    credit is permitted. To copy otherwise, or republish, to post on
+    servers or to redistribute to lists, requires prior specific
+    permission and/or a fee. Request permissions from
+permissions@acm.org.}
+\conferenceinfo{CCS'13,}{November 4--8, 2013, Berlin, Germany. \\
+    {\mycrnotice{Copyright is held by the owner/author(s). Publication
+rights licensed to ACM.}}}
+\copyrightetc{ACM \the\acmcopyr}
+\crdata{978-1-4503-2477-9/13/11\ ...\$15.00.\\
+    http://dx.doi.org/10.1145/2508859.2516697 
+}
+
+\clubpenalty=10000 
+\widowpenalty = 10000
 
 \usepackage{url}
 \newcommand{\fixme}{{\bf XXX\ }}
@@ -10,33 +36,33 @@
 
 \title{Tappan Zee (North) Bridge: Mining Memory Accesses for Introspection}
 
-%\numberofauthors{4}
-%
-%\author{
-%\alignauthor
-%Brendan Dolan-Gavitt\\
-%    \affaddr{Georgia Institute of Technology}\\
-%    \email{brendan@cc.gatech.edu}
-%\alignauthor
-%Josh Hodosh\\
-%    \affaddr{MIT Lincoln Laboratory}\\
-%    \email{josh.hodosh@ll.mit.edu}
-%\and
-%\alignauthor
-%Tim Leek\\
-%    \affaddr{MIT Lincoln Laboratory}\\
-%    \email{tleek@ll.mit.edu}
-%\alignauthor
-%Wenke Lee\\
-%    \affaddr{Georgia Institute of Technology}\\
-%    \email{wenke@cc.gatech.edu}
-%} % end author
+\numberofauthors{4}
+
+\author{
+\alignauthor
+Brendan Dolan-Gavitt\\
+    \affaddr{Georgia Tech}\\
+    \email{brendan@cc.gatech.edu}
+\alignauthor
+Tim Leek\\
+    \affaddr{MIT Lincoln Laboratory}\\
+    \email{tleek@ll.mit.edu}
+\alignauthor
+Josh Hodosh\\
+    \affaddr{MIT Lincoln Laboratory}\\
+    \email{josh.hodosh@ll.mit.edu}
+\and
+\alignauthor
+Wenke Lee\\
+    \affaddr{Georgia Tech}\\
+    \email{wenke@cc.gatech.edu}
+} % end author
 
 \maketitle
 
 % Use the following at camera-ready time to suppress page numbers.
 % Comment it out when you first submit the paper for review.
-%\thispagestyle{empty}
+\thispagestyle{empty}
 
 \begin{abstract}
 
@@ -56,8 +82,15 @@ efficacy of our techniques by finding tap points for four useful
 introspection tasks such as finding SSL keys and monitoring web browser
 activity on five different operating systems (Windows 7, Linux, FreeBSD,
 Minix and Haiku) and two processor architectures (ARM and x86).
+\footnote{This work was performed under U.S. Air Force contract
+FA8721-05-C-0002. Opinions, interpretations, conclusions, and
+recommendations are not necessarily endorsed by the U.S. Government.}
 
 \end{abstract}
+
+\category{D.4.6}{Operating Systems}{Security and Protection}
+\terms{Design, Security}
+\keywords{Introspection; active monitoring; security}
 
 \input{introduction}
 
@@ -76,6 +109,8 @@ Minix and Haiku) and two processor architectures (ARM and x86).
 \input{relwork}
 
 \input{conclusion}
+
+\input{acks}
 
 \bibliographystyle{abbrv}
 \bibliography{biblio}
