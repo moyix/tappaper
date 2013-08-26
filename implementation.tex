@@ -21,8 +21,8 @@ even instruction level, if desired. QEMU lowers instructions to an
 intermediate language (IL) in order to employ a single back-end code
 generator, the Tiny Code Generator (TCG). This IL means dynamic analyses
 can potentially be written once and re-used for all 14 architectures
-supported by QEMU. Further, this version of QEMU is modern enough to be
-able to boot and run modern operating systems such as Windows 7 (earlier
+supported by QEMU. Further, this version of QEMU is capable of booting
+and running modern operating systems such as Windows 7 (earlier
 versions of QEMU such as 0.9.1 cannot).
 
 There are three main aspects to PANDA that make it very convenient for
@@ -129,7 +129,7 @@ future work, however.
 \label{sec:implementation:subsec:bigram}
 
 Collecting bigram statistics on data that passes through each tap point
-is an efficient way to enable ``fuzzy'' search based based on some
+is an efficient way to enable ``fuzzy'' search based on some
 training examples, as well as enabling clustering. To implement this
 we collect bigram statistics for all tap points seen in execution, as
 well as for the exemplar; the data seen at each tap point is thus
