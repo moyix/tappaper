@@ -22,7 +22,17 @@ the monitored code is executed), it is insecure, unreliable, and not
 available on every architecture. We hope to examine how existing
 solutions such as compiler modifications~\cite{stackshield,Chiueh:2001ys}
 or dynamic binary translation~\cite{Sinnadurai:2008vn} can be used to
-efficiently maintain the shadow stack information needed for TZB.
+efficiently maintain the shadow stack information needed for TZB. We
+also note that Intel's Haswell architecture, which as of this writing
+has just been released, has hardware support for keeping track of calls
+and returns~\cite{Haswell}; this would provide an excellent base on
+which to build a low-overhead security system based on TZB tap points.
+
+Code generated at runtime (i.e., JIT or injected code) may make
+re-identification of a discovered tap point difficult or even
+impossible. Given the rise of languages that depend on JIT runtimes,
+better solutions are needed for this scenario, and the problem of how to
+make use of tap points in JIT code should be explored further.
 
 Finally, as seen in Section~\ref{sec:eval:subsec:cluster}, the
 clustering results are promising, but not yet fully developed. We hope

@@ -35,6 +35,12 @@ active monitoring, where events should be reported as soon as
 possible, it makes handling data whose \emph{spatial} order in memory
 differs from its \emph{temporal} order as it is accessed more difficult.
 
+Third, the \emph{encoding} of the data sought must be to some extent
+guessable. For example, to search for a string, one must know what
+encodings are likely to be used by the system to represent strings. In
+general this is not a severe limitation, but it does come up; we discuss
+one such case in Section \ref{sec:eval:subsec:dmesg}.
+
 Finally, the use of calling context in the definition of a tap point
 raises the question of how much context is necessary or useful. Our
 current system uses only the most recent caller, but we have seen

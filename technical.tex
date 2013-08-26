@@ -16,17 +16,19 @@ creating a recording that captures the desired OS or application
 behavior. For example, if the end goal is to be notified each time a
 user loads a new URL in Firefox, one would create a recording of Firefox
 visiting several URLs. This recording is made by emulating the OS and
-application inside of PANDA, which can capture and record all sources of
-non-determinism with low overhead, allowing for later deterministic
-replay. Next, one can run one or more analyses that seek out the desired
-information among all memory accesses seen during the execution.
-Analyses in TZB take the form of PANDA plugins that are called on each
-memory access made during a replayed execution and, at the end, write
-out a report on the tap points analyzed. Finally, the tap points found
-should be validated to ensure that they do, in fact, provide the desired
-information. Such assurance can be gained either by examining the data
-in the tap point in new executions, or by examining the code around the
-tap point. This workflow is illustrated in Figure~\ref{fig:workflow}.
+application inside of the dynamic analysis platform PANDA (described in
+more detail in Section \ref{sec:implementation:subsec:panda}), which can
+capture and record all sources of non-determinism with low overhead,
+allowing for later deterministic replay. Next, one can run one or more
+analyses that seek out the desired information among all memory accesses
+seen during the execution.  Analyses in TZB take the form of PANDA
+plugins that are called on each memory access made during a replayed
+execution and, at the end, write out a report on the tap points
+analyzed. Finally, the tap points found should be validated to ensure
+that they do, in fact, provide the desired information. Such assurance
+can be gained either by examining the data in the tap point in new
+executions, or by examining the code around the tap point. This workflow
+is illustrated in Figure~\ref{fig:workflow}.
 
 In this section, we describe three different ways of finding tap points
 grouped according to a standard epistemic classification
