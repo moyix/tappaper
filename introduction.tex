@@ -39,8 +39,8 @@ system where it would be useful to interpose.
 In this paper, we attempt to address the limitations of past solutions
 by examining a rich source of information about system and application
 activity: memory accesses observed at runtime. Our key insight is that a
-memory access made at a different points in a program can be treated as
-a stream of related information. For example, when visiting a URL, a web
+memory accesses made at different points in a program can be treated as
+streams of related information. For example, when visiting a URL, a web
 browser must write to memory the URL that is being visited, and it will
 generally do so at the same point in the program. By intercepting memory
 accesses made at this program point we can observe all URLs visited. These
